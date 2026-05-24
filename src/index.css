@@ -1,0 +1,440 @@
+@font-face {
+  font-family: 'Poppins';
+  src: url('./assets/fonts/poppins-v20-latin-400.woff2') format('woff2');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Poppins';
+  src: url('./assets/fonts/poppins-v20-latin-700.woff2') format('woff2');
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Poppins';
+  src: url('./assets/fonts/poppins-v20-latin-800.woff2') format('woff2');
+  font-weight: 800;
+  font-style: normal;
+  font-display: swap;
+}
+
+:root {
+  --font-sans: 'Poppins', sans-serif;
+}
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 0 0% 100%;
+    --foreground: 210 14% 15%;
+
+    --card: 0 0% 100%;
+    --card-foreground: 210 14% 15%;
+
+    --popover: 0 0% 100%;
+    --popover-foreground: 210 14% 15%;
+
+    /* New primary color - #539d4e */
+    --primary: 115 34% 47%;
+    --primary-foreground: 0 0% 100%;
+    --primary-light: 115 35% 95%;
+    --primary-dark: 115 34% 40%;
+    --primary-glow: 115 60% 55%;
+    --primary-highlighted: 115 50% 60%;
+
+    /* Logo steel blue - #7BA7C2 */
+    --secondary-blue: 202 35% 62%;
+    --secondary-blue-light: 202 35% 94%;
+
+    --secondary: 210 20% 96%;
+    --secondary-foreground: 210 14% 15%;
+
+    --muted: 210 15% 97%;
+    --muted-foreground: 210 8% 55%;
+
+    --accent: 113 35% 95%;
+    --accent-foreground: 113 42% 32%;
+
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 0 0% 100%;
+
+    --border: 210 18% 91%;
+    --input: 210 18% 91%;
+    --ring: 113 42% 42%;
+    --radius: 0.75rem;
+
+    --section-alt: 210 20% 97.5%;
+    --section-hero: 200 25% 97%;
+    --text-heading: 210 14% 13%;
+    --text-body: 210 8% 35%;
+    --text-muted: 210 6% 55%;
+    --text-light: 210 8% 45%;
+
+    /* Glassmorphism */
+    --glass-bg: 0 0% 100% / 0.7;
+    --glass-border: 0 0% 100% / 0.2;
+    --glass-blur: 20px;
+
+    --sidebar-background: 0 0% 98%;
+    --sidebar-foreground: 240 5.3% 26.1%;
+    --sidebar-primary: 240 5.9% 10%;
+    --sidebar-primary-foreground: 0 0% 98%;
+    --sidebar-accent: 240 4.8% 95.9%;
+    --sidebar-accent-foreground: 240 5.9% 10%;
+    --sidebar-border: 220 13% 91%;
+    --sidebar-ring: 217.2 91.2% 59.8%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground font-body antialiased;
+    overflow-x: hidden;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    @apply font-heading;
+    color: hsl(var(--text-heading));
+  }
+
+  p {
+    color: hsl(var(--text-body));
+  }
+}
+
+@layer components {
+  .section-padding {
+    @apply pt-6 md:pt-8 lg:pt-10 pb-12 md:pb-20 lg:pb-28;
+  }
+
+  .section-alt {
+    background-color: hsl(var(--section-alt));
+  }
+
+  .section-hero {
+    background-color: hsl(var(--section-hero));
+  }
+
+  .container-narrow {
+    @apply max-w-7xl mx-auto px-4 md:px-8;
+  }
+
+  /* Premium CTA button with glow */
+  .btn-cta {
+    background: hsl(var(--primary));
+    color: hsl(var(--primary-foreground));
+    @apply inline-flex items-center gap-2 px-7 py-3.5 rounded-full font-semibold text-base transition-all duration-300 shadow-lg;
+    box-shadow: 0 4px 15px hsl(var(--primary) / 0.3);
+  }
+
+  .btn-cta:hover {
+    box-shadow: 0 6px 25px hsl(var(--primary) / 0.45);
+    @apply -translate-y-0.5;
+  }
+
+  .btn-outline {
+    @apply inline-flex items-center gap-2 px-7 py-3.5 rounded-full font-semibold text-base border-2 transition-all duration-300;
+    border-color: hsl(var(--primary));
+    color: hsl(var(--primary));
+  }
+
+  .btn-outline:hover {
+    background-color: hsl(var(--primary-light));
+    @apply -translate-y-0.5;
+  }
+
+  /* Glassmorphism card */
+  .glass-card {
+    background: hsl(var(--glass-bg));
+    backdrop-filter: blur(var(--glass-blur));
+    -webkit-backdrop-filter: blur(var(--glass-blur));
+    border: 1px solid hsl(var(--glass-border));
+    @apply rounded-2xl;
+  }
+
+  /* Scroll Animation Utilities (Zero-JS overhead) */
+  .scroll-fade-up {
+    @apply opacity-0 translate-y-6 transition-all duration-700 ease-out;
+    will-change: opacity, transform;
+  }
+
+  .scroll-fade-up.is-visible {
+    @apply opacity-100 translate-y-0;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .scroll-fade-up {
+      @apply transition-none opacity-100 translate-y-0;
+    }
+  }
+
+  /* Premium card with gradient border on hover */
+  .premium-card {
+    @apply bg-card rounded-2xl border border-border/60 transition-all duration-500 relative overflow-hidden;
+  }
+
+  .premium-card::before {
+    content: '';
+    @apply absolute inset-0 rounded-2xl opacity-0 transition-opacity duration-500 pointer-events-none;
+    background: linear-gradient(135deg, hsl(var(--primary) / 0.05), hsl(var(--secondary-blue) / 0.05));
+  }
+
+  .premium-card:hover::before,
+  .premium-card-active::before {
+    @apply opacity-100;
+  }
+
+  .premium-card>* {
+    @apply relative z-10;
+  }
+
+  .premium-card:hover,
+  .premium-card-active {
+    border-color: hsl(var(--primary) / 0.25);
+    box-shadow: 0 10px 40px -10px hsl(var(--primary) / 0.15), 0 4px 6px -4px hsl(0 0% 0% / 0.05);
+  }
+
+  /* Icon box with gradient */
+  .icon-box {
+    @apply w-12 h-12 rounded-xl flex items-center justify-center shrink-0 transition-all duration-300;
+    background: linear-gradient(135deg, hsl(var(--primary-light)), hsl(var(--secondary-blue-light)));
+  }
+
+  .premium-card:hover .icon-box,
+  .group:hover .icon-box {
+    background: linear-gradient(135deg, hsl(var(--primary) / 0.15), hsl(var(--secondary-blue) / 0.15));
+  }
+
+  .icon-box-lg {
+    @apply w-14 h-14 rounded-xl flex items-center justify-center shrink-0;
+    background: hsl(var(--primary));
+  }
+
+  /* Solid primary color text */
+  .gradient-text {
+    color: hsl(var(--primary));
+  }
+
+  /* Animated gradient mesh background */
+  .gradient-mesh {
+    position: absolute;
+    inset: 0;
+    background:
+      radial-gradient(at 20% 30%, hsl(var(--primary) / 0.08) 0%, transparent 50%),
+      radial-gradient(at 80% 20%, hsl(var(--secondary-blue) / 0.06) 0%, transparent 50%),
+      radial-gradient(at 40% 80%, hsl(var(--primary) / 0.04) 0%, transparent 50%),
+      radial-gradient(at 90% 70%, hsl(var(--secondary-blue) / 0.06) 0%, transparent 50%);
+    contain: strict;
+    pointer-events: none;
+    z-index: -1;
+  }
+
+  /* Floating blob animation */
+  .blob {
+    @apply absolute rounded-full blur-3xl opacity-20 pointer-events-none;
+    animation: blob-float 8s ease-in-out infinite;
+  }
+
+  .blob-1 {
+    background: hsl(var(--primary) / 0.3);
+    animation-delay: 0s;
+  }
+
+  .blob-2 {
+    background: hsl(var(--secondary-blue) / 0.3);
+    animation-delay: -4s;
+  }
+
+  /* Green underline decoration */
+  .green-underline {
+    position: relative;
+    display: inline;
+  }
+
+  .green-underline::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    bottom: -4px;
+    width: 100%;
+    height: 4px;
+    border-radius: 2px;
+    background: hsl(var(--primary));
+  }
+
+  /* Section divider */
+  .section-divider {
+    @apply w-20 h-1 rounded-full mx-auto;
+    background: hsl(var(--primary));
+  }
+
+  /* Pill badge */
+  .pill-badge {
+    @apply inline-flex items-center gap-2 px-4 py-2 rounded-full text-sm font-semibold;
+    background: hsl(var(--primary) / 0.08);
+    color: hsl(var(--primary));
+    border: 1px solid hsl(var(--primary) / 0.15);
+  }
+
+  /* Number badge */
+  .step-number {
+    @apply w-10 h-10 rounded-full flex items-center justify-center text-sm font-bold;
+    background: linear-gradient(135deg, hsl(var(--primary)), hsl(var(--primary-dark)));
+    color: hsl(var(--primary-foreground));
+    box-shadow: 0 4px 12px hsl(var(--primary) / 0.3);
+  }
+}
+
+@keyframes blob-float {
+
+  0%,
+  100% {
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+
+  33% {
+    transform: translate3d(15px, -15px, 0) scale(1.05);
+  }
+
+  66% {
+    transform: translate3d(-10px, 10px, 0) scale(0.95);
+  }
+}
+
+@keyframes badge-float {
+
+  0%,
+  100% {
+    transform: translate(0, 0) scale(1);
+  }
+
+  33% {
+    transform: translate(3px, -3px) scale(1.01);
+  }
+
+  66% {
+    transform: translate(-2px, 2px) scale(0.99);
+  }
+}
+
+@keyframes pulse-glow {
+
+  0%,
+  100% {
+    box-shadow: 0 0 0 0 hsl(var(--primary) / 0.4);
+  }
+
+  50% {
+    box-shadow: 0 0 0 8px hsl(var(--primary) / 0);
+  }
+}
+
+html {
+  scroll-behavior: smooth;
+  scroll-padding-top: 5.5rem;
+  /* Offset for fixed navbar when scrolling to anchors */
+  scrollbar-gutter: stable;
+}
+
+/* Prevent horizontal overflow on mobile */
+body {
+  overflow-x: hidden;
+  max-width: 100vw;
+  width: 100%;
+}
+
+/* Specific fix for Radix UI / shadcn menu layout shifts */
+body[data-scroll-locked] {
+  padding-right: 0 !important;
+}
+
+/* Ensure images/iframes don't overflow */
+img,
+iframe,
+video {
+  max-width: 100%;
+}
+
+/* Layer promotion only when necessary or hovered for smoother animations */
+.blob {
+  will-change: transform, opacity;
+  transform: translateZ(0);
+  backface-visibility: hidden;
+  perspective: 1000px;
+  pointer-events: none;
+  contain: strict;
+}
+
+.glass-card:hover {
+  will-change: transform;
+}
+
+/* Performance Optimizations for Mobile */
+@media (max-width: 768px) {
+
+  /* Disable heavy floating animations on mobile to save CPU */
+  .blob {
+    animation: none !important;
+    opacity: 0.1 !important;
+  }
+
+  /* Background stability */
+  .gradient-mesh {
+    contain: paint;
+  }
+}
+
+/* Better touch targets on mobile */
+@media (max-width: 640px) {
+
+  button,
+  a,
+  input,
+  textarea,
+  select {
+    min-height: 36px;
+  }
+}
+
+/* Custom reCAPTCHA Badge Styling - Bottom Left, Hover to Reveal */
+.grecaptcha-badge {
+  visibility: visible !important;
+  bottom: 14px !important;
+  left: 0 !important;
+  right: auto !important;
+  width: 70px !important;
+  overflow: hidden !important;
+  transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+  z-index: 40 !important;
+  box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1) !important;
+  border-radius: 0 8px 8px 0 !important;
+  transform: scale(0.85);
+  transform-origin: left bottom;
+}
+
+.grecaptcha-badge:hover {
+  width: 256px !important;
+}
+
+/* Mobile reCAPTCHA badge fix to prevent overlapping content */
+@media (max-width: 768px) {
+  .grecaptcha-badge {
+    bottom: 85px !important;
+  }
+}

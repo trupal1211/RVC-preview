@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex, nofollow">
+<title>Core Capabilities Engine</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+    body {
+        margin: 0; padding: 2rem;
+        background: #f8fafc;
+        font-family: 'Inter', sans-serif;
+        display: flex; justify-content: center;
+    }
+    .features-anim {
+        font-family: 'Inter', sans-serif;
+    }
+    .container {
+        position: relative;
+        width: 100%;
+        max-width: 600px;
+        height: 450px;
+        background: #ffffff;
+        border-radius: 12px;
+        box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
+        display: flex;
+        flex-direction: column;
+        overflow: hidden;
+        border: 1px solid rgba(226, 232, 240, 0.8);
+    }
+    .header {
+        padding: 16px 20px;
+        border-bottom: 1px solid rgba(226, 232, 240, 0.8);
+        background: linear-gradient(to bottom, #ffffff, #f8fafc);
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        z-index: 10;
+    }
+    .header-left { display: flex; align-items: center; gap: 10px; }
+    .icon-box {
+        width: 32px; height: 32px; border-radius: 50%;
+        background: linear-gradient(135deg, #e0e7ff, #eef2ff);
+        border: 1.5px solid #c7d2fe;
+        display: flex; align-items: center; justify-content: center;
+    }
+    .title { font-size: 14px; font-weight: 600; color: #0f172a; letter-spacing: -0.02em; }
+    .badge {
+        padding: 4px 10px; border-radius: 12px;
+        background: #eef2ff; border: 1px solid #c7d2fe;
+        font-size: 9.5px; font-weight: 500; color: #4338ca;
+        font-family: 'JetBrains Mono', monospace; letter-spacing: 0.05em;
+    }
+    
+    .canvas-wrap {
+        flex: 1; position: relative; background: rgba(248, 250, 252, 0.5);
+    }
+    .bg-grid {
+        position: absolute; inset: 0; opacity: 0.03;
+        background-image: radial-gradient(circle at 2px 2px, #0f172a 1px, transparent 0);
+        background-size: 24px 24px;
+    }
+    svg { width: 100%; height: 100%; display: block; transition: opacity 0.6s; }
+
+    @keyframes popIn {
+        0%  { opacity: 0; transform: scale(0.2); }
+        65% { transform: scale(1.08); }
+        100%{ opacity: 1; transform: scale(1); }
+    }
+    @keyframes drawPath {
+        from{ stroke-dashoffset: 500; }
+        to  { stroke-dashoffset: 0; }
+    }
+    @keyframes labelFade {
+        from{ opacity: 0; transform: translateY(3px); }
+        to  { opacity: 1; transform: translateY(0); }
+    }
+
+    .node-group { opacity: 0; }
+    .edge-path { stroke-dasharray: 500; stroke-dashoffset: 500; }
+    .edge-label { opacity: 0; }
+</style>
+</head>
+<body>
+
+<div class="container">
+    <div class="header">
+        <div class="header-left">
+            <div class="icon-box">
+                <svg viewBox="0 0 16 16" fill="none" style="width: 16px; height: 16px;">
+                    <circle cx="8" cy="8" r="4" stroke="#4f46e5" stroke-width="1.5"/>     
+                    <circle cx="8" cy="8" r="1.5" fill="#4f46e5" opacity="0.8"/>
+                </svg>
+            </div>
+            <div class="title">Core Capabilities Engine</div>
+        </div>
+        <div class="badge"><span id="active-count">0</span> ACTIVE</div>
+    </div>
+
+    <div class="canvas-wrap">
+        <div class="bg-grid"></div>
+        <svg id="svg-canvas" viewBox="0 0 580 360" preserveAspectRatio="xMidYMid meet">
+            <defs>
+                <filter id="shadow-sm" x="-30%" y="-30%" width="160%" height="160%">    
+                    <feDropShadow dx="0" dy="2" stdDeviation="3" flood-color="rgba(0,0,0,0.10)"/>
+                </filter>
+                <filter id="shadow-md" x="-40%" y="-40%" width="180%" height="180%">    
+                    <feDropShadow dx="0" dy="3" stdDeviation="6" flood-color="rgba(0,0,0,0.12)"/>
+                </filter>
+                <marker id="arr-blue" viewBox="0 0 8 8" refX="6" refY="4" markerWidth="5" markerHeight="5" orient="auto">
+                    <path d="M1 1.5L6 4L1 6.5" fill="none" stroke="#3b82f6" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/>
+                </marker>
+                <marker id="arr-green" viewBox="0 0 8 8" refX="6" refY="4" markerWidth="5" markerHeight="5" orient="auto">
+                    <path d="M1 1.5L6 4L1 6.5" fill="none" stroke="#16a34a" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/>
+                </marker>
+                <marker id="arr-amber" viewBox="0 0 8 8" refX="6" refY="4" markerWidth="5" markerHeight="5" orient="auto">
+                    <path d="M1 1.5L6 4L1 6.5" fill="none" stroke="#d97706" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/>
+                </marker>
+                <marker id="arr-purple" viewBox="0 0 8 8" refX="6" refY="4" markerWidth="5" markerHeight="5" orient="auto">
+                    <path d="M1 1.5L6 4L1 6.5" fill="none" stroke="#8b5cf6" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/>
+                </marker>
+            </defs>
+            <g id="layer-lines"></g>
+            <g id="layer-labels"></g>
+            <g id="layer-nodes"></g>
+        </svg>
+    </div>
+</div>
+
+<script>
+const NODES = {
+  root: { x: 290, y: 180, r: 35, label: 'Core\nCapabilities', type: 'root', color: '#1d4ed8', bg: '#eff6ff', border: '#bfdbfe' },
+  acct: { x: 100, y: 45,  r: 16, label: 'Account\nManagement', type: 'leaf', color: '#0369a1', bg: '#f0f9ff', border: '#bae6fd' },
+  opp:  { x: 50,  y: 135, r: 16, label: 'Opportunity\nPipeline', type: 'leaf', color: '#16a34a', bg: '#f0fdf4', border: '#bbf7d0' },
+  cont: { x: 50,  y: 225, r: 16, label: 'Contact\nMapping', type: 'leaf', color: '#d97706', bg: '#fffbeb', border: '#fcd34d' },
+  case: { x: 100, y: 315, r: 16, label: 'Case\nManagement', type: 'leaf', color: '#8b5cf6', bg: '#f5f3ff', border: '#ddd6fe' },
+  asset:{ x: 480, y: 45,  r: 16, label: 'Asset\nTracking', type: 'leaf', color: '#0369a1', bg: '#f0f9ff', border: '#bae6fd' },
+  cntr: { x: 530, y: 135, r: 16, label: 'Contract\nManagement', type: 'leaf', color: '#16a34a', bg: '#f0fdf4', border: '#bbf7d0' },
+  prtn: { x: 530, y: 225, r: 16, label: 'Partner\nManagement', type: 'leaf', color: '#d97706', bg: '#fffbeb', border: '#fcd34d' },
+  cust: { x: 480, y: 315, r: 16, label: 'Custom\nObjects', type: 'leaf', color: '#8b5cf6', bg: '#f5f3ff', border: '#ddd6fe' },
+};
+
+const EDGE_STYLES = {
+  blue:   { stroke:'#3b82f6', width:1.4, arrow:'arr-blue',  labelBg:'#eff6ff', labelColor:'#1d4ed8' },
+  green:  { stroke:'#16a34a', width:1.4, arrow:'arr-green', labelBg:'#f0fdf4', labelColor:'#15803d' },
+  amber:  { stroke:'#d97706', width:1.4, arrow:'arr-amber', labelBg:'#fffbeb', labelColor:'#92400e' },
+  purple: { stroke:'#8b5cf6', width:1.4, arrow:'arr-purple',labelBg:'#f5f3ff', labelColor:'#6d28d9' },
+};
+
+const STEPS = [
+  { nodes:['root'], edges:[] },
+  {
+    nodes:['acct','opp','cont','case'],
+    edges:[
+      { id:'e1', from:'root', to:'acct', style:'blue',  label:'Hierarchy' },   
+      { id:'e2', from:'root', to:'opp',  style:'green', label:'Pipeline' },   
+      { id:'e3', from:'root', to:'cont', style:'amber', label:'Network' },   
+      { id:'e4', from:'root', to:'case', style:'purple',label:'Support' },   
+    ]
+  },
+  {
+    nodes:['asset','cntr','prtn','cust'],
+    edges:[
+      { id:'e5', from:'root', to:'asset', style:'blue',  label:'Tracking' },
+      { id:'e6', from:'root', to:'cntr',  style:'green', label:'Agreements' },
+      { id:'e7', from:'root', to:'prtn',  style:'amber', label:'Channels' },
+      { id:'e8', from:'root', to:'cust',  style:'purple',label:'Extensible' },
+    ]
+  }
+];
+
+const layerLines = document.getElementById('layer-lines');
+const layerLabels = document.getElementById('layer-labels');
+const layerNodes = document.getElementById('layer-nodes');
+const svgCanvas = document.getElementById('svg-canvas');
+const activeCount = document.getElementById('active-count');
+
+function createSVGElement(tag) {
+    return document.createElementNS('http://www.w3.org/2000/svg', tag);
+}
+
+function initDOM() {
+    STEPS.forEach((step, stepIdx) => {
+        step.edges.forEach((edge, eIdx) => {
+            const fn = NODES[edge.from];
+            const tn = NODES[edge.to];
+            const s = EDGE_STYLES[edge.style];
+            const animDelay = (stepIdx * 1000) + (eIdx * 100);
+
+            const x1 = fn.x + (fn.x < tn.x ? fn.r : -fn.r);
+            const y1 = fn.y;
+            const x2 = tn.x - (fn.x < tn.x ? tn.r : -tn.r);
+            const y2 = tn.y;
+            const cx = (x1 + x2) / 2;
+
+            // Line
+            const path = createSVGElement('path');
+            path.setAttribute('d', `M${x1},${y1} C${cx},${y1} ${cx},${y2} ${x2},${y2}`);
+            path.setAttribute('fill', 'none');
+            path.setAttribute('stroke', s.stroke);
+            path.setAttribute('stroke-width', s.width);
+            path.setAttribute('marker-end', `url(#${s.arrow})`);
+            path.classList.add('edge-path');
+            path.dataset.delay = animDelay;
+            layerLines.appendChild(path);
+
+            // Label
+            if (edge.label) {
+                const lx = (x1 + x2) / 2;
+                const ly = (y1 + y2) / 2 - 6;
+                const gLabel = createSVGElement('g');
+                gLabel.classList.add('edge-label');
+                gLabel.dataset.delay = animDelay + 400;
+
+                const rect = createSVGElement('rect');
+                rect.setAttribute('x', lx - 30);
+                rect.setAttribute('y', ly - 8);
+                rect.setAttribute('width', 60);
+                rect.setAttribute('height', 14);
+                rect.setAttribute('rx', 7);
+                rect.setAttribute('fill', s.labelBg);
+                rect.setAttribute('stroke', s.stroke);
+                rect.setAttribute('stroke-width', 0.5);
+
+                const text = createSVGElement('text');
+                text.setAttribute('x', lx);
+                text.setAttribute('y', ly + 2);
+                text.setAttribute('fill', s.labelColor);
+                text.setAttribute('font-size', 7.5);
+                text.setAttribute('font-weight', 500);
+                text.setAttribute('text-anchor', 'middle');
+                text.textContent = edge.label;
+
+                gLabel.appendChild(rect);
+                gLabel.appendChild(text);
+                layerLabels.appendChild(gLabel);
+            }
+        });
+
+        step.nodes.forEach((nId, nIdx) => {
+            const n = NODES[nId];
+            const animDelay = (stepIdx * 1000) + (nIdx * 150 + 150);
+
+            const onRight = n.x >= 290;
+            const labelX = n.type === 'root' ? n.x : onRight ? n.x + n.r + 6 : n.x - n.r - 6;
+            const labelY = n.type === 'root' ? n.y + n.r + 14 : n.y - 4;
+            const anchor = n.type === 'root' ? 'middle' : onRight ? 'start' : 'end';
+
+            const gNode = createSVGElement('g');
+            gNode.style.transformOrigin = `${n.x}px ${n.y}px`;
+            gNode.classList.add('node-group');
+            gNode.dataset.delay = animDelay;
+
+            const circle = createSVGElement('circle');
+            circle.setAttribute('cx', n.x);
+            circle.setAttribute('cy', n.y);
+            circle.setAttribute('r', n.r);
+            circle.setAttribute('fill', n.bg);
+            circle.setAttribute('stroke', n.border);
+            circle.setAttribute('stroke-width', n.type === 'root' ? 2 : 1.2);
+            circle.setAttribute('filter', n.type === 'root' ? 'url(#shadow-md)' : 'url(#shadow-sm)');
+            gNode.appendChild(circle);
+
+            if (n.type === 'root') {
+                const inner = createSVGElement('circle');
+                inner.setAttribute('cx', n.x);
+                inner.setAttribute('cy', n.y);
+                inner.setAttribute('r', n.r * 0.45);
+                inner.setAttribute('fill', n.color);
+                inner.setAttribute('opacity', 0.85);
+                gNode.appendChild(inner);
+            } else {
+                const inner = createSVGElement('rect');
+                inner.setAttribute('x', n.x - 5);
+                inner.setAttribute('y', n.y - 5);
+                inner.setAttribute('width', 10);
+                inner.setAttribute('height', 10);
+                inner.setAttribute('rx', 2);
+                inner.setAttribute('fill', n.color);
+                inner.setAttribute('opacity', 0.7);
+                gNode.appendChild(inner);
+            }
+
+            const lines = n.label.split('\n');
+            lines.forEach((line, i) => {
+                const text = createSVGElement('text');
+                text.setAttribute('x', labelX);
+                text.setAttribute('y', labelY + i * 13);
+                text.setAttribute('fill', n.type === 'root' ? '#1e3a8a' : '#334155');
+                text.setAttribute('font-size', n.type === 'root' ? 11 : 8.5);
+                text.setAttribute('font-weight', n.type === 'root' ? 700 : 500);
+                text.setAttribute('text-anchor', anchor);
+                text.textContent = line;
+                gNode.appendChild(text);
+            });
+
+            layerNodes.appendChild(gNode);
+        });
+    });
+}
+
+function runAnimation() {
+    let edgeCount = 0;
+    
+    document.querySelectorAll('.edge-path').forEach(el => {
+        const delay = el.dataset.delay || 0;
+        el.style.animation = `drawPath 0.6s ease ${delay}ms forwards`;
+        setTimeout(() => { activeCount.textContent = ++edgeCount; }, delay);
+    });
+
+    document.querySelectorAll('.edge-label').forEach(el => {
+        const delay = el.dataset.delay || 0;
+        el.style.animation = `labelFade 0.4s ease ${delay}ms both`;
+    });
+
+    document.querySelectorAll('.node-group').forEach(el => {
+        const delay = el.dataset.delay || 0;
+        el.style.animation = `popIn 0.45s cubic-bezier(0.34,1.15,0.64,1) ${delay}ms both`;
+    });
+
+    setTimeout(() => {
+        svgCanvas.style.opacity = '0';
+        setTimeout(() => {
+            // Reset
+            svgCanvas.style.opacity = '1';
+            edgeCount = 0; activeCount.textContent = '0';
+            document.querySelectorAll('.edge-path, .edge-label, .node-group').forEach(el => el.style.animation = 'none');
+            // Trigger reflow
+            void svgCanvas.offsetWidth;
+            runAnimation();
+        }, 600);
+    }, 6000);
+}
+
+initDOM();
+setTimeout(runAnimation, 100);
+
+</script>
+</body>
+</html>

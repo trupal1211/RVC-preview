@@ -1,0 +1,102 @@
+/* NotFound page animations — pure CSS, zero JS overhead */
+
+@keyframes notFoundFloat {
+
+    0%,
+    100% {
+        transform: translate(0, 0);
+    }
+
+    33% {
+        transform: translate(30px, -40px);
+    }
+
+    66% {
+        transform: translate(-20px, 20px);
+    }
+}
+
+@keyframes notFoundFloatAlt {
+
+    0%,
+    100% {
+        transform: translate(0, 0);
+    }
+
+    33% {
+        transform: translate(-30px, 40px);
+    }
+
+    66% {
+        transform: translate(20px, -20px);
+    }
+}
+
+@keyframes notFoundPulse {
+
+    0%,
+    100% {
+        transform: scale(1);
+    }
+
+    50% {
+        transform: scale(1.05);
+    }
+}
+
+@keyframes notFoundFadeUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.not-found-blob {
+    animation: notFoundFloat 12s ease-in-out infinite;
+    will-change: transform;
+}
+
+.not-found-blob--alt {
+    animation: notFoundFloatAlt 15s ease-in-out infinite;
+}
+
+.not-found-pulse {
+    animation: notFoundPulse 3s ease-in-out infinite;
+    will-change: transform;
+}
+
+.not-found-content {
+    animation: notFoundFadeUp 0.8s ease-out both;
+}
+
+.not-found-stagger-1 {
+    animation: notFoundFadeUp 0.5s ease-out 0.2s both;
+}
+
+.not-found-stagger-2 {
+    animation: notFoundFadeUp 0.5s ease-out 0.4s both;
+}
+
+.not-found-stagger-3 {
+    animation: notFoundFadeUp 0.5s ease-out 0.6s both;
+}
+
+@media (prefers-reduced-motion: reduce) {
+
+    .not-found-blob,
+    .not-found-blob--alt,
+    .not-found-pulse,
+    .not-found-content,
+    .not-found-stagger-1,
+    .not-found-stagger-2,
+    .not-found-stagger-3 {
+        animation: none;
+        opacity: 1;
+        transform: none;
+    }
+}

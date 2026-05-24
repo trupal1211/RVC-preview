@@ -1,0 +1,19 @@
+RelationshipVista Production Build Notes
+-------------------------------------------
+
+Routes available in routing file / sitemap:
+- /
+- /resources/user-guide
+- /resources/installation-guide
+- /privacy-policy
+- /terms-of-use
+
+Forms & Mail Server:
+The contact form submits via fetch to the relative path `/api/contact.php`.
+For phase 1 deployment on Bluehost, a basic PHP `mail()` handler is included at `public/api/contact.php`. It is currently configured to send alerts to: `parambuddh26@gmail.com`.
+
+Bluehost Apache config:
+An `.htaccess` file is bundled inside the root `dist` output. It will rewrite SPA logic correctly to React Router, redirect HTTP to HTTPS, and canonicalize non-www queries to `www.`.
+
+SEO:
+`sitemap.xml` and `robots.txt` are bundled at the root level.

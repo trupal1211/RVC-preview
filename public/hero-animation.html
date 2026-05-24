@@ -1,0 +1,589 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex, nofollow">
+<title>RelationshipVista Hero</title>
+<style>
+  *{margin:0;padding:0;box-sizing:border-box}
+  :root{
+    --forest:#0B3D2E;
+    --forest-mid:#14563F;
+    --forest-light:#1A7A56;
+    --steel:#4A7C9B;
+    --steel-light:#6BA3C7;
+    --neon:#7FFF00;
+    --neon-soft:rgba(127,255,0,0.6);
+    --glass:rgba(255,255,255,0.85);
+    --glass-border:rgba(0,0,0,0.1);
+    --glass-strong:rgba(255,255,255,0.95);
+  }
+  body{
+    width:100vw;height:100vh;overflow:hidden;
+    background:transparent;
+    font-family:'Segoe UI',system-ui,sans-serif;
+  }
+  canvas#bg{position:fixed;top:0;left:0;width:100%;height:100%;z-index:0}
+  .scene{position:relative;z-index:1;width:100%;height:100%;display:flex;align-items:center;justify-content:center}
+  
+  /* Main dashboard container */
+  .dashboard{
+    position:relative;
+    width:min(1400px,92vw);
+    height:min(800px,85vh);
+    perspective:1200px;
+  }
+  .dashboard-inner{
+    width:100%;height:100%;
+    transform:rotateX(4deg) rotateY(-2deg);
+    transform-style:preserve-3d;
+    position:relative;
+  }
+  
+  /* Glass panel */
+  .glass-panel{
+    position:absolute;
+    background:var(--glass);
+    border:1px solid var(--glass-border);
+    border-radius:20px;
+    backdrop-filter:blur(24px);
+    -webkit-backdrop-filter:blur(24px);
+    box-shadow:
+      0 8px 32px rgba(0,0,0,0.4),
+      inset 0 1px 0 rgba(255,255,255,0.1),
+      0 0 80px rgba(127,255,0,0.03);
+    overflow:hidden;
+  }
+  .glass-panel::before{
+    content:'';position:absolute;top:0;left:0;right:0;height:1px;
+    background:linear-gradient(90deg,transparent,rgba(255,255,255,0.3),transparent);
+  }
+  
+  /* Main center panel */
+  .panel-main{
+    top:0;left:12%;width:76%;height:100%;
+    z-index:2;
+    animation:floatMain 6s ease-in-out infinite;
+  }
+  @keyframes floatMain{0%,100%{transform:translateY(0) translateZ(0)}50%{transform:translateY(-8px) translateZ(10px)}}
+  
+  /* Side panels */
+  .panel-left{
+    top:8%;left:0;width:16%;height:50%;
+    z-index:1;
+    transform:translateZ(-30px) rotateY(6deg);
+    animation:floatLeft 7s ease-in-out infinite;
+  }
+  @keyframes floatLeft{0%,100%{transform:translateZ(-30px) rotateY(6deg) translateY(0)}50%{transform:translateZ(-30px) rotateY(6deg) translateY(-12px)}}
+  
+  .panel-right{
+    top:5%;right:0;width:16%;height:55%;
+    z-index:1;
+    transform:translateZ(-30px) rotateY(-6deg);
+    animation:floatRight 8s ease-in-out infinite;
+  }
+  @keyframes floatRight{0%,100%{transform:translateZ(-30px) rotateY(-6deg) translateY(0)}50%{transform:translateZ(-30px) rotateY(-6deg) translateY(-10px)}}
+  
+  .panel-bottom{
+    bottom:0;left:20%;width:35%;height:18%;
+    z-index:3;
+    transform:translateZ(20px);
+    animation:floatBottom 5s ease-in-out infinite;
+  }
+  @keyframes floatBottom{0%,100%{transform:translateZ(20px) translateY(0)}50%{transform:translateZ(20px) translateY(-6px)}}
+  
+  .panel-top-right{
+    top:-3%;right:8%;width:22%;height:15%;
+    z-index:3;
+    transform:translateZ(15px);
+    animation:floatTopR 6.5s ease-in-out infinite;
+  }
+  @keyframes floatTopR{0%,100%{transform:translateZ(15px) translateY(0)}50%{transform:translateZ(15px) translateY(-10px)}}
+  
+  /* SVG node map */
+  .node-map{width:100%;height:100%}
+  
+  /* Panel headers */
+  .panel-header{
+    padding:12px 16px;
+    border-bottom:1px solid var(--glass-border);
+    display:flex;align-items:center;gap:8px;
+  }
+  .dot{width:8px;height:8px;border-radius:50%}
+  .dot-r{background:#FF5F57}
+  .dot-y{background:#FEBC2E}
+  .dot-g{background:#28C840}
+  
+  .panel-title{
+    font-size:11px;
+    color:rgba(255,255,255,0.5);
+    letter-spacing:1.5px;
+    text-transform:uppercase;
+    margin-left:8px;
+  }
+  
+  /* Floating badges */
+  .badge{
+    position:absolute;
+    background:var(--glass-strong);
+    border:1px solid var(--glass-border);
+    border-radius:12px;
+    backdrop-filter:blur(16px);
+    padding:10px 16px;
+    display:flex;align-items:center;gap:10px;
+    z-index:10;
+    animation:badgeFloat 5s ease-in-out infinite;
+  }
+  .badge-icon{
+    width:32px;height:32px;
+    border-radius:8px;
+    display:flex;align-items:center;justify-content:center;
+    font-size:14px;
+  }
+  .badge-icon.green{background:rgba(127,255,0,0.15);color:var(--neon)}
+  .badge-icon.blue{background:rgba(74,124,155,0.25);color:var(--steel-light)}
+  .badge-label{font-size:10px;color:rgba(0,0,0,0.45);text-transform:uppercase;letter-spacing:1px}
+  .badge-value{font-size:16px;color:#0f172a;font-weight:600}
+  
+  .badge-1{top:12%;left:2%;animation-delay:-1s}
+  .badge-2{bottom:18%;right:2%;animation-delay:-3s}
+  .badge-3{top:20%;right:4%;animation-delay:-2s}
+  .badge-4{bottom:8%;left:15%;animation-delay:-4s}
+  @keyframes badgeFloat{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
+  
+  /* Mini chart bars in side panels */
+  .mini-bars{
+    display:flex;align-items:flex-end;gap:4px;
+    padding:16px;height:calc(100% - 44px);
+  }
+  .mini-bar{
+    flex:1;
+    border-radius:4px 4px 0 0;
+    min-height:8px;
+    animation:barGrow 1.5s ease-out forwards;
+    transform-origin:bottom;
+    transform:scaleY(0);
+  }
+  @keyframes barGrow{to{transform:scaleY(1)}}
+  
+  /* Metric rows */
+  .metric-rows{padding:12px 16px}
+  .metric-row{
+    display:flex;justify-content:space-between;align-items:center;
+    padding:8px 0;
+    border-bottom:1px solid rgba(255,255,255,0.05);
+  }
+  .metric-row:last-child{border:none}
+  .metric-dot{width:6px;height:6px;border-radius:50%;margin-right:8px;display:inline-block}
+  .metric-name{font-size:10px;color:rgba(0,0,0,0.4);display:flex;align-items:center}
+  .metric-val{font-size:11px;color:rgba(255,255,255,0.7);font-weight:500}
+  
+  /* Connectivity gauge */
+  .gauge-wrap{
+    display:flex;flex-direction:column;align-items:center;
+    justify-content:center;height:calc(100% - 44px);
+    padding:12px;
+  }
+  .gauge-ring{
+    width:80px;height:80px;
+    border-radius:50%;
+    border:3px solid rgba(255,255,255,0.85);
+    position:relative;
+    display:flex;align-items:center;justify-content:center;
+  }
+  .gauge-ring::before{
+    content:'';position:absolute;top:-3px;left:-3px;right:-3px;bottom:-3px;
+    border-radius:50%;
+    border:3px solid transparent;
+    border-top-color:var(--neon);
+    border-right-color:var(--neon);
+    animation:spin 3s linear infinite;
+  }
+  @keyframes spin{to{transform:rotate(360deg)}}
+  .gauge-num{font-size:22px;color:#0f172a;font-weight:700}
+  .gauge-label{font-size:9px;color:rgba(0,0,0,0.4);margin-top:8px;text-transform:uppercase;letter-spacing:1px}
+  
+  /* Glow effects */
+  .glow-orb{
+    position:absolute;border-radius:50%;
+    filter:blur(80px);opacity:0.3;
+    pointer-events:none;z-index:0;
+  }
+  .glow-1{width:400px;height:400px;background:var(--forest-light);top:10%;left:20%;animation:orbMove1 12s ease-in-out infinite}
+  .glow-2{width:350px;height:350px;background:var(--steel);bottom:10%;right:15%;animation:orbMove2 15s ease-in-out infinite}
+  .glow-3{width:250px;height:250px;background:var(--neon);top:50%;left:50%;opacity:0.08;animation:orbMove3 10s ease-in-out infinite}
+  @keyframes orbMove1{0%,100%{transform:translate(0,0)}50%{transform:translate(40px,-30px)}}
+  @keyframes orbMove2{0%,100%{transform:translate(0,0)}50%{transform:translate(-50px,20px)}}
+  @keyframes orbMove3{0%,100%{transform:translate(-50%,-50%)}50%{transform:translate(-30%,-40%)}}
+  
+  /* Scan line */
+  .scanline{
+    position:absolute;top:0;left:0;width:100%;height:2px;
+    background:linear-gradient(90deg,transparent,var(--neon-soft),transparent);
+    opacity:0.15;z-index:20;pointer-events:none;
+    animation:scanDown 4s linear infinite;
+  }
+  @keyframes scanDown{0%{top:0}100%{top:100%}}
+  
+  /* Particle container */
+  .particles{position:fixed;top:0;left:0;width:100%;height:100%;z-index:0;pointer-events:none}
+  .particle{
+    position:absolute;width:2px;height:2px;
+    background:var(--neon);border-radius:50%;
+    opacity:0;
+    animation:particleFade 4s ease-in-out infinite;
+  }
+  @keyframes particleFade{0%,100%{opacity:0;transform:translateY(0)}50%{opacity:0.6;transform:translateY(-40px)}}
+
+  /* Grid floor */
+  .grid-floor{
+    position:absolute;bottom:-10%;left:-10%;width:120%;height:40%;
+    background:
+      linear-gradient(rgba(127,255,0,0.03) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(127,255,0,0.03) 1px, transparent 1px);
+    background-size:60px 60px;
+    transform:perspective(500px) rotateX(60deg);
+    transform-origin:center bottom;
+    opacity:0.6;z-index:0;
+    mask-image:linear-gradient(to top,rgba(0,0,0,0.8),transparent);
+    -webkit-mask-image:linear-gradient(to top,rgba(0,0,0,0.8),transparent);
+  }
+</style>
+</head>
+<body>
+
+<!-- Background glow orbs -->
+<div class="glow-orb glow-1"></div>
+<div class="glow-orb glow-2"></div>
+<div class="glow-orb glow-3"></div>
+
+<!-- Particles -->
+<div class="particles" id="particles"></div>
+
+<div class="scene">
+  <div class="dashboard">
+    <div class="grid-floor"></div>
+    <div class="dashboard-inner">
+      
+      <!-- Main center panel with node map -->
+      <div class="glass-panel panel-main">
+        <div class="panel-header">
+          <span class="dot dot-r"></span><span class="dot dot-y"></span><span class="dot dot-g"></span>
+          <span class="panel-title">Relationship Hierarchy Map</span>
+        </div>
+        <div class="scanline"></div>
+        <svg class="node-map" id="nodeMap" viewBox="0 0 1000 680"></svg>
+      </div>
+      
+      <!-- Left side panel - bar chart -->
+      <div class="glass-panel panel-left">
+        <div class="panel-header">
+          <span class="dot dot-g"></span>
+          <span class="panel-title">Activity</span>
+        </div>
+        <div class="mini-bars" id="miniBars"></div>
+      </div>
+      
+      <!-- Right side panel - metrics -->
+      <div class="glass-panel panel-right">
+        <div class="panel-header">
+          <span class="dot dot-g"></span>
+          <span class="panel-title">Hierarchy Levels</span>
+        </div>
+        <div class="metric-rows">
+          <div class="metric-row"><span class="metric-name"><span class="metric-dot" style="background:var(--neon)"></span>Enterprise</span><span class="metric-val">Level 1</span></div>
+          <div class="metric-row"><span class="metric-name"><span class="metric-dot" style="background:var(--steel-light)"></span>Business Unit</span><span class="metric-val">Level 2</span></div>
+          <div class="metric-row"><span class="metric-name"><span class="metric-dot" style="background:var(--forest-light)"></span>Division</span><span class="metric-val">Level 3</span></div>
+          <div class="metric-row"><span class="metric-name"><span class="metric-dot" style="background:rgba(255,255,255,0.3)"></span>Department</span><span class="metric-val">Level 4</span></div>
+          <div class="metric-row"><span class="metric-name"><span class="metric-dot" style="background:#FEBC2E"></span>Account</span><span class="metric-val">Level 5</span></div>
+          <div class="metric-row"><span class="metric-name"><span class="metric-dot" style="background:#FF5F57"></span>Contact</span><span class="metric-val">Level 6</span></div>
+        </div>
+      </div>
+      
+      <!-- Bottom panel - connectivity gauge -->
+      <div class="glass-panel panel-bottom">
+        <div style="display:flex;align-items:center;height:100%;padding:0 20px;gap:20px">
+          <div class="gauge-ring"><span class="gauge-num">94</span></div>
+          <div>
+            <div class="gauge-label">Connectivity Score</div>
+            <div style="display:flex;gap:16px;margin-top:8px">
+              <div><span style="font-size:18px;color:#0f172a;font-weight:600">2,847</span><br><span style="font-size:9px;color:rgba(0,0,0,0.35)">CONNECTIONS</span></div>
+              <div><span style="font-size:18px;color:var(--neon);font-weight:600">156</span><br><span style="font-size:9px;color:rgba(0,0,0,0.35)">HIERARCHIES</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Top right mini panel -->
+      <div class="glass-panel panel-top-right">
+        <div style="display:flex;align-items:center;height:100%;padding:0 16px;gap:12px">
+          <div style="width:40px;height:40px;border-radius:10px;background:rgba(127,255,0,0.1);display:flex;align-items:center;justify-content:center">
+            <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M10 2L12.5 7.5L18 8.5L14 12.5L15 18L10 15.5L5 18L6 12.5L2 8.5L7.5 7.5L10 2Z" fill="var(--neon)" opacity="0.8"/></svg>
+          </div>
+          <div>
+            <div style="font-size:9px;color:rgba(0,0,0,0.4);text-transform:uppercase;letter-spacing:1px">Health Score</div>
+            <div style="font-size:20px;color:#0f172a;font-weight:700">98.2<span style="font-size:11px;color:var(--neon)">%</span></div>
+          </div>
+        </div>
+      </div>
+      
+    </div>
+    
+    <!-- Floating badges -->
+    <div class="badge badge-1">
+      <div class="badge-icon green">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="3" fill="currentColor"/><circle cx="8" cy="8" r="6" stroke="currentColor" stroke-width="1.5" opacity="0.4"/></svg>
+      </div>
+      <div><div class="badge-label">Connectivity</div><div class="badge-value">98.7%</div></div>
+    </div>
+    <div class="badge badge-2">
+      <div class="badge-icon blue">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><rect x="2" y="2" width="5" height="5" rx="1" fill="currentColor"/><rect x="9" y="2" width="5" height="5" rx="1" fill="currentColor" opacity="0.5"/><rect x="2" y="9" width="5" height="5" rx="1" fill="currentColor" opacity="0.5"/><rect x="9" y="9" width="5" height="5" rx="1" fill="currentColor" opacity="0.3"/></svg>
+      </div>
+      <div><div class="badge-label">Hierarchy</div><div class="badge-value">6 Levels</div></div>
+    </div>
+    <div class="badge badge-3">
+      <div class="badge-icon green">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M8 2v12M2 8h12" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+      </div>
+      <div><div class="badge-label">Accounts</div><div class="badge-value">1,247</div></div>
+    </div>
+    <div class="badge badge-4">
+      <div class="badge-icon blue">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M3 8l3 3 7-7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </div>
+      <div><div class="badge-label">Sync Status</div><div class="badge-value">Active</div></div>
+    </div>
+    
+  </div>
+</div>
+
+<script>
+// Generate particles
+const particlesEl = document.getElementById('particles');
+for(let i=0;i<30;i++){
+  const p=document.createElement('div');
+  p.className='particle';
+  p.style.left=Math.random()*100+'%';
+  p.style.top=Math.random()*100+'%';
+  p.style.animationDelay=Math.random()*4+'s';
+  p.style.animationDuration=(3+Math.random()*3)+'s';
+  particlesEl.appendChild(p);
+}
+
+// Generate mini bars
+const barsEl=document.getElementById('miniBars');
+const barHeights=[40,65,50,80,60,45,90,55,70,48,85,62];
+const barColors=['var(--forest-light)','var(--steel)','var(--neon)'];
+barHeights.forEach((h,i)=>{
+  const b=document.createElement('div');
+  b.className='mini-bar';
+  b.style.height=h+'%';
+  b.style.background=`linear-gradient(to top, ${barColors[i%3]}, ${barColors[(i+1)%3]})`;
+  b.style.opacity='0.7';
+  b.style.animationDelay=(i*0.1)+'s';
+  barsEl.appendChild(b);
+});
+
+// Build SVG Node Map
+const svg=document.getElementById('nodeMap');
+const ns='http://www.w3.org/2000/svg';
+
+// Define nodes in a tree hierarchy
+const nodes=[
+  // Root - Level 1
+  {id:0,x:500,y:80,r:28,level:1,label:'Enterprise'},
+  // Level 2
+  {id:1,x:250,y:200,r:22,level:2},
+  {id:2,x:500,y:200,r:22,level:2},
+  {id:3,x:750,y:200,r:22,level:2},
+  // Level 3
+  {id:4,x:130,y:330,r:17,level:3},
+  {id:5,x:280,y:330,r:17,level:3},
+  {id:6,x:420,y:330,r:17,level:3},
+  {id:7,x:580,y:330,r:17,level:3},
+  {id:8,x:700,y:330,r:17,level:3},
+  {id:9,x:850,y:330,r:17,level:3},
+  // Level 4
+  {id:10,x:80,y:450,r:13,level:4},
+  {id:11,x:180,y:450,r:13,level:4},
+  {id:12,x:260,y:460,r:13,level:4},
+  {id:13,x:340,y:450,r:13,level:4},
+  {id:14,x:440,y:460,r:13,level:4},
+  {id:15,x:540,y:450,r:13,level:4},
+  {id:16,x:640,y:460,r:13,level:4},
+  {id:17,x:740,y:450,r:13,level:4},
+  {id:18,x:830,y:460,r:13,level:4},
+  {id:19,x:920,y:450,r:13,level:4},
+  // Level 5
+  {id:20,x:60,y:560,r:9,level:5},
+  {id:21,x:130,y:570,r:9,level:5},
+  {id:22,x:200,y:560,r:9,level:5},
+  {id:23,x:290,y:570,r:9,level:5},
+  {id:24,x:370,y:560,r:9,level:5},
+  {id:25,x:460,y:570,r:9,level:5},
+  {id:26,x:550,y:560,r:9,level:5},
+  {id:27,x:630,y:570,r:9,level:5},
+  {id:28,x:720,y:560,r:9,level:5},
+  {id:29,x:800,y:570,r:9,level:5},
+  {id:30,x:880,y:560,r:9,level:5},
+  {id:31,x:950,y:570,r:9,level:5},
+];
+
+const edges=[
+  [0,1],[0,2],[0,3],
+  [1,4],[1,5],[2,6],[2,7],[3,8],[3,9],
+  [4,10],[4,11],[5,12],[5,13],[6,14],[6,15],[7,16],[7,17],[8,18],[9,19],
+  [10,20],[10,21],[11,22],[12,23],[13,24],[14,25],[15,26],[16,27],[17,28],[18,29],[19,30],[19,31],
+  // Cross connections
+  [1,2],[2,3],[5,6],[7,8],[12,14],[16,18],
+];
+
+const levelColors={
+  1:'#7FFF00',
+  2:'#4A7C9B',
+  3:'#1A7A56',
+  4:'rgba(0,0,0,0.4)',
+  5:'#FEBC2E',
+};
+
+// Defs
+const defs=document.createElementNS(ns,'defs');
+
+// Glow filter
+const glowFilter=document.createElementNS(ns,'filter');
+glowFilter.setAttribute('id','glow');
+glowFilter.innerHTML='<feGaussianBlur stdDeviation="4" result="blur"/><feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>';
+defs.appendChild(glowFilter);
+
+// Node gradient
+[1,2,3,4,5].forEach(level=>{
+  const grad=document.createElementNS(ns,'radialGradient');
+  grad.setAttribute('id','nodeGrad'+level);
+  const s1=document.createElementNS(ns,'stop');
+  s1.setAttribute('offset','0%');
+  s1.setAttribute('stop-color',levelColors[level]);
+  s1.setAttribute('stop-opacity','0.9');
+  const s2=document.createElementNS(ns,'stop');
+  s2.setAttribute('offset','100%');
+  s2.setAttribute('stop-color',levelColors[level]);
+  s2.setAttribute('stop-opacity','0.3');
+  grad.appendChild(s1);grad.appendChild(s2);
+  defs.appendChild(grad);
+});
+
+svg.appendChild(defs);
+
+// Draw edges
+edges.forEach(([a,b],i)=>{
+  const n1=nodes[a],n2=nodes[b];
+  const isCross=a>0&&Math.abs(a-b)===1&&n1.level===n2.level;
+  
+  const line=document.createElementNS(ns,'line');
+  line.setAttribute('x1',n1.x);line.setAttribute('y1',n1.y);
+  line.setAttribute('x2',n2.x);line.setAttribute('y2',n2.y);
+  
+  if(isCross){
+    line.setAttribute('stroke','rgba(74,124,155,0.15)');
+    line.setAttribute('stroke-width','1');
+    line.setAttribute('stroke-dasharray','4,4');
+  } else {
+    line.setAttribute('stroke','url(#lineGrad'+i+')');
+    line.setAttribute('stroke-width','1.5');
+    line.setAttribute('opacity','0.6');
+  }
+  
+  // Line gradient
+  if(!isCross){
+    const lg=document.createElementNS(ns,'linearGradient');
+    lg.setAttribute('id','lineGrad'+i);
+    lg.setAttribute('x1',n1.x);lg.setAttribute('y1',n1.y);
+    lg.setAttribute('x2',n2.x);lg.setAttribute('y2',n2.y);
+    lg.setAttribute('gradientUnits','userSpaceOnUse');
+    const s1=document.createElementNS(ns,'stop');
+    s1.setAttribute('offset','0%');
+    s1.setAttribute('stop-color',levelColors[n1.level]||'#0f172a');
+    const s2=document.createElementNS(ns,'stop');
+    s2.setAttribute('offset','100%');
+    s2.setAttribute('stop-color',levelColors[n2.level]||'#0f172a');
+    lg.appendChild(s1);lg.appendChild(s2);
+    defs.appendChild(lg);
+  }
+  
+  svg.appendChild(line);
+});
+
+// Animated pulse on edges
+edges.filter(([a,b])=>nodes[a].level!==nodes[b].level).slice(0,8).forEach(([a,b],i)=>{
+  const n1=nodes[a],n2=nodes[b];
+  const circle=document.createElementNS(ns,'circle');
+  circle.setAttribute('r','3');
+  circle.setAttribute('fill','var(--neon)');
+  circle.setAttribute('filter','url(#glow)');
+  circle.setAttribute('opacity','0.8');
+  
+  const anim=document.createElementNS(ns,'animateMotion');
+  anim.setAttribute('dur',(2+Math.random()*2)+'s');
+  anim.setAttribute('repeatCount','indefinite');
+  anim.setAttribute('begin',(i*0.5)+'s');
+  anim.setAttribute('path',`M${n1.x},${n1.y} L${n2.x},${n2.y}`);
+  circle.appendChild(anim);
+  svg.appendChild(circle);
+});
+
+// Draw nodes
+nodes.forEach(n=>{
+  const g=document.createElementNS(ns,'g');
+  
+  // Outer glow
+  const glow=document.createElementNS(ns,'circle');
+  glow.setAttribute('cx',n.x);glow.setAttribute('cy',n.y);
+  glow.setAttribute('r',n.r+8);
+  glow.setAttribute('fill',levelColors[n.level]||'#0f172a');
+  glow.setAttribute('opacity','0.08');
+  glow.setAttribute('filter','url(#glow)');
+  g.appendChild(glow);
+  
+  // Glass circle
+  const outer=document.createElementNS(ns,'circle');
+  outer.setAttribute('cx',n.x);outer.setAttribute('cy',n.y);
+  outer.setAttribute('r',n.r);
+  outer.setAttribute('fill','rgba(255,255,255,0.04)');
+  outer.setAttribute('stroke',levelColors[n.level]||'#0f172a');
+  outer.setAttribute('stroke-width',n.level===1?'2':'1.5');
+  outer.setAttribute('stroke-opacity','0.5');
+  g.appendChild(outer);
+  
+  // Inner bright core
+  const core=document.createElementNS(ns,'circle');
+  core.setAttribute('cx',n.x);core.setAttribute('cy',n.y);
+  core.setAttribute('r',n.r*0.45);
+  core.setAttribute('fill',`url(#nodeGrad${n.level})`);
+  core.appendChild(createPulse(n.level));
+  g.appendChild(core);
+  
+  // Crystalline refraction lines
+  if(n.r>15){
+    const line1=document.createElementNS(ns,'line');
+    line1.setAttribute('x1',n.x-n.r*0.5);line1.setAttribute('y1',n.y-n.r*0.3);
+    line1.setAttribute('x2',n.x+n.r*0.3);line1.setAttribute('y2',n.y+n.r*0.5);
+    line1.setAttribute('stroke','rgba(255,255,255,0.1)');line1.setAttribute('stroke-width','0.5');
+    g.appendChild(line1);
+  }
+  
+  svg.appendChild(g);
+});
+
+function createPulse(level){
+  const anim=document.createElementNS(ns,'animate');
+  anim.setAttribute('attributeName','opacity');
+  anim.setAttribute('values','0.6;1;0.6');
+  anim.setAttribute('dur',(2+level*0.5)+'s');
+  anim.setAttribute('repeatCount','indefinite');
+  return anim;
+}
+</script>
+</body>
+</html>
+
