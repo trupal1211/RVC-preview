@@ -69,26 +69,46 @@ const ContactSection = () => {
     loadRecaptcha();
   }, [loadRecaptcha]);
 
+  const validateField = (field: keyof typeof form, value: string): string => {
+    let errorMsg = "";
+    if (field === "name") {
+      if (!value.trim()) errorMsg = "Name is required";
+      else if (value.trim().length < 2) errorMsg = "Name must be at least 2 characters";
+    } else if (field === "email") {
+      if (!value.trim()) errorMsg = "Email is required";
+      else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)) errorMsg = "Please enter a valid email";
+    } else if (field === "phone") {
+      if (!value.trim()) errorMsg = "Phone number is required";
+      else if (!/^[+]?[(]?[0-9]{3}[)]?[-\s.]?[0-9]{3}[-\s.]?[0-9]{4,6}/.test(value.replace(/\s+/g, ""))) errorMsg = "Please enter a valid phone number";
+    }
+    return errorMsg;
+  };
+
+  const handleBlur = (field: keyof typeof form) => {
+    if (field === "message") return;
+    const errorMsg = validateField(field, form[field]);
+    setErrors(prev => {
+      const newErrors = { ...prev };
+      if (errorMsg) {
+        newErrors[field] = errorMsg;
+      } else {
+        delete newErrors[field];
+      }
+      return newErrors;
+    });
+  };
+
   const validate = () => {
     const e: Record<string, string> = {};
 
-    if (!form.name.trim()) {
-      e.name = "Name is required";
-    } else if (form.name.trim().length < 2) {
-      e.name = "Name must be at least 2 characters";
-    }
+    const nameErr = validateField("name", form.name);
+    if (nameErr) e.name = nameErr;
 
-    if (!form.email.trim()) {
-      e.email = "Email is required";
-    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email)) {
-      e.email = "Please enter a valid email";
-    }
+    const emailErr = validateField("email", form.email);
+    if (emailErr) e.email = emailErr;
 
-    if (!form.phone.trim()) {
-      e.phone = "Phone number is required";
-    } else if (!/^[+]?[(]?[0-9]{3}[)]?[-\s.]?[0-9]{3}[-\s.]?[0-9]{4,6}/.test(form.phone.replace(/\s+/g, ""))) {
-      e.phone = "Please enter a valid phone number";
-    }
+    const phoneErr = validateField("phone", form.phone);
+    if (phoneErr) e.phone = phoneErr;
 
     setErrors(e);
     return Object.keys(e).length === 0;
@@ -178,7 +198,7 @@ const ContactSection = () => {
               <h3 className="text-xl md:text-2xl font-bold font-heading mb-3 text-primary">
                 Quick Contact
               </h3>
-              <p className="text-sm text-text-body leading-relaxed mb-6">
+              <p className="text-sm text-gray-600 leading-relaxed mb-6">
                 Get in touch with a representative to see a demo or simply learn more about the product.
               </p>
             </div>
@@ -197,7 +217,7 @@ const ContactSection = () => {
                 </div>
                 <div className="flex-1 min-w-0">
                   <p className="font-semibold text-text-heading text-sm">Address</p>
-                  <p className="text-sm font-bold text-text-muted leading-relaxed break-words mt-1">
+                  <p className="text-sm font-bold text-gray-500 leading-relaxed break-words mt-1">
                     <span className="hidden md:inline">2040 Martin Ave, Santa Clara, CA 95050<br />United States</span>
                     <span className="md:hidden">2040 Martin Ave, Santa Clara, CA<br />95050, United States</span>
                   </p>
@@ -214,7 +234,7 @@ const ContactSection = () => {
                 </div>
                 <div className="flex-1 min-w-0 py-1">
                   <p className="font-semibold text-text-heading text-sm">Phone</p>
-                  <p className="text-sm font-bold text-text-muted mt-1 group-hover:text-primary transition-colors duration-300">
+                  <p className="text-sm font-bold text-gray-500 mt-1 group-hover:text-primary transition-colors duration-300">
                     1.669.777.6838
                   </p>
                 </div>
@@ -230,7 +250,7 @@ const ContactSection = () => {
                 </div>
                 <div className="flex-1 min-w-0 py-1">
                   <p className="font-semibold text-text-heading text-sm">Email</p>
-                  <p className="text-sm font-bold text-text-muted mt-1 group-hover:text-primary transition-colors duration-300">
+                  <p className="text-sm font-bold text-gray-500 mt-1 group-hover:text-primary transition-colors duration-300">
                     info@ardira.com
                   </p>
                 </div>
@@ -243,7 +263,7 @@ const ContactSection = () => {
                 ?
               </div>
               <div className="flex-1 min-w-0">
-                <p className="text-sm text-text-muted">
+                <p className="text-sm text-gray-700">
                   <span className="hidden md:inline">
                     <span className="font-semibold text-text-heading">For customer support,</span> email us directly at<br />
                   </span>
@@ -342,7 +362,7 @@ const ContactSection = () => {
                   <h3 className="text-lg font-bold text-text-heading mb-1">
                     Fill out the form and we'll be in touch shortly!
                   </h3>
-                  <p className="text-xs text-text-muted">
+                  <p className="text-xs text-gray-500">
                     Note: fields marked with <span className="text-destructive">(*)</span> are mandatory
                   </p>
                 </div>
@@ -360,6 +380,7 @@ const ContactSection = () => {
                       setForm({ ...form, name: e.target.value });
                       if (errors.name) setErrors({ ...errors, name: "" });
                     }}
+                    onBlur={() => handleBlur("name")}
                     className={inputClass("name")}
                     placeholder="Enter your name"
                     style={{ backgroundColor: "white" }}
@@ -380,6 +401,7 @@ const ContactSection = () => {
                       setForm({ ...form, email: e.target.value });
                       if (errors.email) setErrors({ ...errors, email: "" });
                     }}
+                    onBlur={() => handleBlur("email")}
                     className={inputClass("email")}
                     placeholder="Enter your email"
                     style={{ backgroundColor: "white" }}
@@ -400,6 +422,7 @@ const ContactSection = () => {
                       setForm({ ...form, phone: e.target.value });
                       if (errors.phone) setErrors({ ...errors, phone: "" });
                     }}
+                    onBlur={() => handleBlur("phone")}
                     className={inputClass("phone")}
                     placeholder="Enter your phone number"
                     style={{ backgroundColor: "white" }}
@@ -441,7 +464,7 @@ const ContactSection = () => {
                 )}
 
                 {/* Privacy note */}
-                <p className="text-xs text-text-muted leading-relaxed">
+                <p className="text-xs text-gray-500 leading-relaxed">
                   We're committed to your privacy. Ardira uses the information you provide us to contact you about relevant content, products and services. You may unsubscribe from these communications at any time. For information, check out our{" "}
                   <Link
                     to="/privacy-policy"

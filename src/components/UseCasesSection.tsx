@@ -284,28 +284,28 @@ export default function UseCasesSection() {
                         </div>
 
                         {/* Body Text */}
-                        <div className="bg-slate-50/50 border border-slate-200/60 p-5 rounded-xl mb-8 relative overflow-hidden">
+                        <div className="bg-slate-50/50 border border-slate-200/60 p-3 sm:p-4 md:p-5 rounded-xl mb-4 sm:mb-6 md:mb-8 relative overflow-hidden">
                            <div className="absolute left-0 top-0 bottom-0 w-1 bg-primary rounded-l-xl"></div>
-                           <p className="text-lg text-slate-600 leading-relaxed">
+                           <p className="text-sm sm:text-base md:text-lg text-slate-600 leading-relaxed h-[66px] sm:h-[72px] md:h-auto md:min-h-0 flex items-center overflow-hidden">
                               {activeCase.desc}
                            </p>
                         </div>
 
                         {/* Faux Metric Grid */}
                         <div className="grid grid-cols-2 gap-2 sm:gap-4 mt-2">
-                           <div className="p-3 sm:p-4 rounded-xl bg-white border border-slate-200 shadow-[0_2px_10px_rgba(0,0,0,0.02)]">
+                           <div className="py-2 px-2.5 sm:p-4 rounded-xl bg-white border border-slate-200 shadow-[0_2px_10px_rgba(0,0,0,0.02)]">
                               <div className="text-[11px] font-bold text-slate-500 mb-0.5 sm:mb-1 tracking-wider uppercase">Core Entity</div>
                               <div className="text-[14px] sm:text-[16px] font-bold text-slate-900 leading-tight truncate">{metrics.a}</div>
                            </div>
-                           <div className="p-3 sm:p-4 rounded-xl bg-white border border-slate-200 shadow-[0_2px_10px_rgba(0,0,0,0.02)]">
+                           <div className="py-2 px-2.5 sm:p-4 rounded-xl bg-white border border-slate-200 shadow-[0_2px_10px_rgba(0,0,0,0.02)]">
                               <div className="text-[11px] font-bold text-slate-500 mb-0.5 sm:mb-1 tracking-wider uppercase">Visualization</div>
                               <div className="text-[14px] sm:text-[16px] font-bold text-slate-900 leading-tight truncate">{metrics.b}</div>
                            </div>
-                           <div className="p-3 sm:p-4 rounded-xl bg-white border border-slate-200 shadow-[0_2px_10px_rgba(0,0,0,0.02)]">
+                           <div className="py-2 px-2.5 sm:p-4 rounded-xl bg-white border border-slate-200 shadow-[0_2px_10px_rgba(0,0,0,0.02)]">
                               <div className="text-[11px] font-bold text-slate-500 mb-0.5 sm:mb-1 tracking-wider uppercase">Mapping Type</div>
                               <div className="text-[14px] sm:text-[16px] font-bold text-slate-900 leading-tight truncate">{metrics.c}</div>
                            </div>
-                           <div className="p-3 sm:p-4 rounded-xl bg-white border border-slate-200 shadow-[0_2px_10px_rgba(0,0,0,0.02)] relative overflow-hidden">
+                           <div className="py-2 px-2.5 sm:p-4 rounded-xl bg-white border border-slate-200 shadow-[0_2px_10px_rgba(0,0,0,0.02)] relative overflow-hidden">
                               <div className="absolute inset-0 bg-primary/5"></div>
                               <div className="text-[11px] font-bold text-slate-500 mb-0.5 sm:mb-1 tracking-wider uppercase relative z-10">Data Sync</div>
                               <div className="text-[13px] sm:text-[16px] font-bold text-primary flex items-center gap-1 sm:gap-1.5 relative z-10 truncate">

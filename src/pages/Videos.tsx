@@ -10,7 +10,7 @@ const videos = [
     {
         title: "What is RVC?",
         description:
-            "Get a quick overview of RelationshipVista Configuration — what it does, why it matters, and how it helps you visualize Salesforce relationships effortlessly.",
+            "Get a quick overview of RelationshipVista — what it does, why it matters, and how it helps you visualize Salesforce relationships effortlessly.",
         icon: Film,
         accent: "from-primary/20 to-secondary-blue/20",
         borderAccent: "group-hover:border-primary/40",
@@ -26,9 +26,9 @@ const videos = [
         number: "02",
     },
     {
-        title: "How to Configure RVC Using Sample Data?",
+        title: "How to Load Sample Data for evaluating RelationshipVista?",
         description:
-            "Learn how to set up RelationshipVista using sample data so you can explore all features before applying it to your live Salesforce records.",
+            "Learn how to set up sample data that you can use to explore all RelationshipVista features.",
         icon: Play,
         accent: "from-primary/15 to-emerald-500/15",
         borderAccent: "group-hover:border-primary/40",
@@ -117,7 +117,7 @@ export default function Videos() {
                                     </div>
 
                                     {/* Card Content */}
-                                    <div className="flex flex-col flex-1 p-5 md:p-6">
+                                    <div className="flex flex-col flex-1 px-4 py-5 md:px-4 md:py-5">
                                         <div className="mb-3">
                                             <h3 className="text-base md:text-lg font-semibold text-text-heading leading-snug">
                                                 {video.title}

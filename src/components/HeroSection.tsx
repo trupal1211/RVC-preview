@@ -1,5 +1,6 @@
-import { ArrowRight, ExternalLink, Sparkles } from "lucide-react";
+import { ArrowRight, ExternalLink, Sparkles, PlayCircle } from "lucide-react";
 import { useState, useCallback, lazy, Suspense } from "react";
+import { useNavigate } from "react-router-dom";
 import HeroInfographic from "./HeroInfographic";
 import "./HeroSection.css";
 
@@ -10,6 +11,7 @@ const APPEXCHANGE_URL =
 
 const HeroSection = () => {
   const [isCalendlyOpen, setIsCalendlyOpen] = useState(false);
+  const navigate = useNavigate();
 
   const openCalendly = useCallback(() => setIsCalendlyOpen(true), []);
   const closeCalendly = useCallback(() => setIsCalendlyOpen(false), []);
@@ -17,6 +19,7 @@ const HeroSection = () => {
     () => window.open(APPEXCHANGE_URL, "_blank"),
     []
   );
+  const goToVideos = useCallback(() => navigate("/resources/videos"), [navigate]);
 
   return (
     <section
@@ -43,9 +46,9 @@ const HeroSection = () => {
             <div className="hero-anim-title w-full">
               <h1 className="text-[32px] sm:text-[36px] md:text-[44px] lg:text-[52px] font-extrabold leading-[1.1] font-heading tracking-tight">
                 <span className="relative inline-block z-10">
-                  RelationshipVista
+                  <span className="relative z-10">RelationshipVista</span>
                   <svg
-                    className="absolute -bottom-4 sm:-bottom-7 left-0 w-[102%] -translate-x-[1%] -z-10 overflow-visible"
+                    className="absolute -bottom-4 sm:-bottom-7 left-0 w-[102%] -translate-x-[1%] z-0 overflow-visible pointer-events-none"
                     viewBox="0 0 200 24"
                     fill="none"
                     preserveAspectRatio="none"
@@ -103,16 +106,32 @@ const HeroSection = () => {
             </div>
 
             <div className="hero-anim-buttons w-full flex flex-col items-center lg:items-start">
-              <div className="flex flex-wrap justify-center lg:justify-start gap-4 pt-2 w-full">
-                <button
-                  onClick={openCalendly}
-                  className="btn-cta text-sm sm:text-base px-6 sm:px-7 w-full sm:w-auto justify-center"
-                >
-                  Book a Demo <ArrowRight className="h-5 w-5" />
-                </button>
+              <div className="flex flex-col items-center lg:items-start gap-4 pt-2 w-full sm:w-max">
+                <div className="flex flex-wrap justify-center lg:justify-start gap-4 w-full">
+                  <button
+                    onClick={openCalendly}
+                    className="btn-cta text-sm sm:text-base px-6 sm:px-7 w-full sm:w-auto justify-center"
+                  >
+                    Book a Demo <ArrowRight className="h-5 w-5" />
+                  </button>
+                  {/* 
+                  <button
+                    onClick={goToVideos}
+                    className="inline-flex items-center gap-2 pl-1 pr-6 sm:pr-7 py-3.5 rounded-full font-semibold text-base sm:text-lg transition-all duration-300 text-gray-600 hover:text-primary justify-center w-full sm:w-auto"
+                  >
+                    <PlayCircle className="h-6 w-6" /> View Demo Videos
+                  </button>
+                  */}
+                  <button
+                    onClick={goToVideos}
+                    className="btn-outline text-sm sm:text-base px-6 sm:px-7 w-full sm:w-auto justify-center"
+                  >
+                    <PlayCircle className="h-4 w-4" /> View Demo Videos
+                  </button>
+                </div>
                 <button
                   onClick={openAppExchange}
-                  className="btn-outline text-sm sm:text-base px-6 sm:px-7 w-full sm:w-auto justify-center"
+                  className="btn-outline text-sm sm:text-base px-6 sm:px-7 w-full justify-center"
                 >
                   Start Free on AppExchange{" "}
                   <ExternalLink className="h-4 w-4" />

@@ -9,7 +9,7 @@ const WhatIsSection = () => {
 
           {/* Image */}
           <ScrollFade
-            className="relative w-full flex items-center justify-center h-auto order-2 lg:order-1"
+            className="relative w-full flex items-center justify-center h-auto order-2 lg:order-1 -mt-4 lg:mt-0"
           >
             <HeroAnimation />
           </ScrollFade>
@@ -26,7 +26,7 @@ const WhatIsSection = () => {
                 Overview
               </p>
               <h2 className="text-3xl md:text-[36px] font-bold leading-tight font-heading">
-                The Intelligent Relationship Visualization Tool <span className="text-primary">Built inside Salesforce</span>
+                Uncover Deeper Insights with <span className="text-primary">Simplified Relationship Mapping</span>
               </h2>
             </ScrollFade>
 

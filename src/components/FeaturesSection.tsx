@@ -75,8 +75,8 @@ const FeaturesSection = () => {
         <div className="block lg:grid lg:grid-cols-[1.3fr_1fr] gap-10 lg:gap-16">
           {/* Left Column: Wrapper for sticky mockup on desktop (centered in available space) */}
           <div
-            className="relative lg:sticky lg:top-[90px] lg:h-[calc(100vh-100px)] flex flex-col justify-center w-full max-w-full min-w-0 mb-6 lg:mb-0"
-            style={{ zIndex: 10 }}
+            className="relative sticky top-[74px] lg:top-[90px] lg:h-[calc(100vh-100px)] flex flex-col justify-center w-full max-w-full min-w-0 pb-4 lg:pb-0 mb-2 lg:mb-0"
+            style={{ zIndex: 10, backgroundColor: 'hsl(var(--section-alt))' }}
           >
             <ScrollFade delay={100} className="flex flex-col justify-center w-[90%] sm:w-full max-w-full min-w-0 mx-auto">
               <div className="bg-card rounded-xl sm:rounded-2xl border border-border/60 relative overflow-hidden w-full !border-border/40 shadow-xl">
@@ -104,16 +104,17 @@ const FeaturesSection = () => {
               <ScrollFade
                 key={cap.title}
                 delay={i * 60}
-                className="flex items-start gap-4 p-4 rounded-xl border border-transparent hover:border-primary/15 hover:bg-card transition-all duration-300 cursor-default group"
               >
-                <div className="icon-box">
-                  <cap.icon className="h-5 w-5 text-primary" />
-                </div>
-                <div className="pt-0.5">
-                  <h3 className="text-[15px] font-bold font-heading text-text-heading mb-1 group-hover:text-primary transition-colors">
-                    {cap.title}
-                  </h3>
-                  <p className="text-sm text-text-muted leading-relaxed">{cap.description}</p>
+                <div className="flex items-start gap-4 p-4 rounded-xl border border-transparent hover:border-primary/15 hover:bg-card transition-all duration-150 cursor-default group">
+                  <div className="icon-box">
+                    <cap.icon className="h-5 w-5 text-primary" />
+                  </div>
+                  <div className="pt-0.5">
+                    <h3 className="text-[15px] font-bold font-heading text-text-heading mb-1 group-hover:text-primary transition-colors">
+                      {cap.title}
+                    </h3>
+                    <p className="text-sm text-text-muted leading-relaxed">{cap.description}</p>
+                  </div>
                 </div>
               </ScrollFade>
             ))}

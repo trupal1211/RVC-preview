@@ -29,6 +29,24 @@ const App = () => {
   useEffect(() => {
     // Load reCAPTCHA immediately on app mount to display the badge globally
     loadRecaptcha();
+
+    // Mobile reCAPTCHA Fix: Toggle open state on tap, since hover lacks a native dismiss-on-retap gesture
+    const handleRecaptchaInteraction = (e: MouseEvent | TouchEvent) => {
+      if (window.matchMedia("(hover: hover) and (pointer: fine)").matches) return;
+
+      const badge = document.querySelector('.grecaptcha-badge');
+      if (badge && badge.contains(e.target as Node)) {
+        badge.classList.toggle('is-open');
+      } else if (badge) {
+        badge.classList.remove('is-open');
+      }
+    };
+
+    document.addEventListener('click', handleRecaptchaInteraction);
+
+    return () => {
+      document.removeEventListener('click', handleRecaptchaInteraction);
+    };
   }, [loadRecaptcha]);
 
   return (
