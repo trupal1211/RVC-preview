@@ -115,13 +115,8 @@ const ContactSection = () => {
     return Object.keys(e).length === 0;
   };
 
-  // ---------- DEPLOYMENT CONFIGURATIONS ----------
-  // Uncomment the line below for Original Domain (PHP deployment)
-  // const CONTACT_API_URL = "http://localhost:8000/contact.php";
-
-  // Uncomment the line below for Vercel deployment (Nodemailer)
-  const CONTACT_API_URL = "/api/contact";
-  // ------------------------------------------------
+  const EDGE_FUNCTION_URL =
+    "https://wcwdswvijpaovpxmviyh.supabase.co/functions/v1/submit-lead";
 
   const handleSubmit = async (ev: React.FormEvent) => {
     ev.preventDefault();
@@ -130,30 +125,36 @@ const ContactSection = () => {
     setIsSubmitting(true);
 
     try {
-      // Get reCAPTCHA token
-      let token = await executeRecaptcha("contact_form");
+      const response = await fetch(EDGE_FUNCTION_URL, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "apikey": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Indjd2Rzd3ZpanBhb3ZweG12aXloIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzk3NjQyNjIsImV4cCI6MjA5NTM0MDI2Mn0.ivKiCtFcmZpWnZR04VaXMWe6UJs76tyvdKWQYVdbxqc",
+          "Authorization": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Indjd2Rzd3ZpanBhb3ZweG12aXloIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzk3NjQyNjIsImV4cCI6MjA5NTM0MDI2Mn0.ivKiCtFcmZpWnZR04VaXMWe6UJs76tyvdKWQYVdbxqc",
+        },
+        body: JSON.stringify({
+          site_id: "RelationshipVista",
+          name: form.name,
+          email: form.email,
+          phone: form.phone,
+          company: "RelationshipVista",
+          message: form.message,
+          source_url: window.location.href,
+        }),
+      });
 
-      if (!token) {
-        console.warn("reCAPTCHA token not available. Proceeding with placeholder token for testing.");
-        token = "dev_placeholder_token";
+      const result = await response.json();
+
+      if (result.success) {
+        setSubmitted(true);
+        setErrors({});
+      } else {
+        setErrors({
+          form:
+            result.message ||
+            "Something went wrong. Please try again.",
+        });
       }
-
-      const submissionData = {
-        name: form.name,
-        email: form.email,
-        phone: form.phone,
-        message: form.message,
-        pageUrl: window.location.href,
-        recaptchaToken: token,
-      };
-
-      console.log("Form submission data:", submissionData);
-
-      // Simulate a network request
-      await new Promise((resolve) => setTimeout(resolve, 800));
-
-      setSubmitted(true);
-      setErrors({});
     } catch (error) {
       console.error("Contact form error:", error);
       setErrors({ form: "Unable to send your message. Please try again later." });
