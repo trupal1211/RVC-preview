@@ -1,6 +1,6 @@
 import { useEffect } from "react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Route, Routes } from "react-router-dom";
+import { BrowserRouter, Route, Routes, useLocation } from "react-router-dom";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -23,6 +23,23 @@ const queryClient = new QueryClient({
     },
   },
 });
+
+const CanonicalManager = () => {
+  const location = useLocation();
+
+  useEffect(() => {
+    const canonicalLink = document.getElementById("canonical-link") as HTMLLinkElement;
+    if (canonicalLink) {
+      // Remove trailing slash if any (unless it's exactly "/") to keep it clean.
+      const path = location.pathname.endsWith('/') && location.pathname !== '/'
+        ? location.pathname.slice(0, -1)
+        : location.pathname;
+      canonicalLink.href = `https://www.relationshipvista.com${path}`;
+    }
+  }, [location.pathname]);
+
+  return null;
+};
 
 const App = () => {
   const { loadRecaptcha } = useRecaptcha();
@@ -60,6 +77,7 @@ const App = () => {
           <Toaster />
           <Sonner />
           <BrowserRouter>
+            <CanonicalManager />
             <Suspense fallback={<div className="min-h-screen flex items-center justify-center bg-background"><div className="w-8 h-8 border-4 border-primary border-t-transparent rounded-full animate-spin"></div></div>}>
               <Routes>
                 <Route path="/" element={<Index />} />
