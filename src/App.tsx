@@ -5,13 +5,14 @@ import { Toaster as Sonner } from "@/components/ui/sonner";
 import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import ErrorBoundary from "@/components/ErrorBoundary";
-import Index from "./pages/Index.tsx";
-import UserGuide from "./pages/UserGuide.tsx";
-import TermsOfUse from "./pages/TermsOfUse.tsx";
-import PrivacyPolicy from "./pages/PrivacyPolicy.tsx";
-import InstallationGuide from "./pages/InstallationGuide.tsx";
-import Videos from "./pages/Videos.tsx";
-import NotFound from "./pages/NotFound.tsx";
+import { lazy, Suspense } from "react";
+const Index = lazy(() => import("./pages/Index.tsx"));
+const UserGuide = lazy(() => import("./pages/UserGuide.tsx"));
+const TermsOfUse = lazy(() => import("./pages/TermsOfUse.tsx"));
+const PrivacyPolicy = lazy(() => import("./pages/PrivacyPolicy.tsx"));
+const InstallationGuide = lazy(() => import("./pages/InstallationGuide.tsx"));
+const Videos = lazy(() => import("./pages/Videos.tsx"));
+const NotFound = lazy(() => import("./pages/NotFound.tsx"));
 import { useRecaptcha } from "@/hooks/useRecaptcha";
 
 const queryClient = new QueryClient({
@@ -27,10 +28,8 @@ const App = () => {
   const { loadRecaptcha } = useRecaptcha();
 
   useEffect(() => {
-    // Load reCAPTCHA immediately on app mount to display the badge globally
-    loadRecaptcha();
-
-    // Mobile reCAPTCHA Fix: Toggle open state on tap, since hover lacks a native dismiss-on-retap gesture
+    // Mobile reCAPTCHA Fix: Toggle open state on tap.
+    // Uses MutationObserver to attach only when the badge appears (loaded lazily by ContactSection).
     const handleRecaptchaInteraction = (e: MouseEvent | TouchEvent) => {
       if (window.matchMedia("(hover: hover) and (pointer: fine)").matches) return;
 
@@ -44,10 +43,15 @@ const App = () => {
 
     document.addEventListener('click', handleRecaptchaInteraction);
 
+    // Globally load reCAPTCHA slightly after page load so it's visible globally
+    // without hurting initial Lighthouse load speeds.
+    const timer = setTimeout(() => loadRecaptcha(), 2500);
+
     return () => {
       document.removeEventListener('click', handleRecaptchaInteraction);
+      clearTimeout(timer);
     };
-  }, [loadRecaptcha]);
+  }, []);
 
   return (
     <ErrorBoundary>
@@ -56,16 +60,18 @@ const App = () => {
           <Toaster />
           <Sonner />
           <BrowserRouter>
-            <Routes>
-              <Route path="/" element={<Index />} />
-              <Route path="/resources/user-guide" element={<UserGuide />} />
-              <Route path="/terms-of-use" element={<TermsOfUse />} />
-              <Route path="/privacy-policy" element={<PrivacyPolicy />} />
-              <Route path="/resources/installation-guide" element={<InstallationGuide />} />
-              <Route path="/resources/videos" element={<Videos />} />
-              {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
-              <Route path="*" element={<NotFound />} />
-            </Routes>
+            <Suspense fallback={<div className="min-h-screen flex items-center justify-center bg-background"><div className="w-8 h-8 border-4 border-primary border-t-transparent rounded-full animate-spin"></div></div>}>
+              <Routes>
+                <Route path="/" element={<Index />} />
+                <Route path="/resources/user-guide" element={<UserGuide />} />
+                <Route path="/terms-of-use" element={<TermsOfUse />} />
+                <Route path="/privacy-policy" element={<PrivacyPolicy />} />
+                <Route path="/resources/installation-guide" element={<InstallationGuide />} />
+                <Route path="/resources/videos" element={<Videos />} />
+                {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
+                <Route path="*" element={<NotFound />} />
+              </Routes>
+            </Suspense>
           </BrowserRouter>
         </TooltipProvider>
       </QueryClientProvider>

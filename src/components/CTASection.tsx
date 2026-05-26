@@ -19,22 +19,22 @@ const CTASection = () => {
       }} />
 
       <div className="container text-center max-w-3xl relative z-10">
-        <ScrollFade delay={100}>
+        <ScrollFade delay={80}>
           <h2 className="text-3xl md:text-[42px] font-extrabold font-heading text-primary-foreground mb-6 leading-tight">
             Ready to Visualize Your Salesforce Relationships?
           </h2>
         </ScrollFade>
-        <ScrollFade delay={200}>
+        <ScrollFade delay={160}>
           <p className="text-lg text-primary-foreground/80 max-w-2xl mx-auto mb-8 leading-relaxed">
             See RelationshipVista in action. Transform how your org explores and
             understands data connections.
           </p>
         </ScrollFade>
-        <ScrollFade delay={300}>
+        <ScrollFade delay={240}>
           <div className="flex flex-wrap justify-center gap-4">
             <button
               onClick={() => setIsCalendlyOpen(true)}
-              className="inline-flex items-center gap-2 px-8 py-4 rounded-full bg-background text-primary font-bold text-base hover:bg-background/90 transition-all shadow-xl hover:-translate-y-1 cursor-pointer"
+              className="inline-flex items-center gap-2 px-8 py-4 rounded-full bg-background text-primary font-bold text-base hover:bg-background/90 transition-colors shadow-xl cursor-pointer"
               style={{ boxShadow: "0 8px 30px rgba(0,0,0,0.15)" }}
             >
               Book a Demo <ArrowRight className="h-5 w-5" />

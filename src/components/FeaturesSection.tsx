@@ -78,7 +78,7 @@ const FeaturesSection = () => {
             className="relative sticky top-[74px] lg:top-[90px] lg:h-[calc(100vh-100px)] flex flex-col justify-center w-full max-w-full min-w-0 pb-4 lg:pb-0 mb-2 lg:mb-0"
             style={{ zIndex: 10, backgroundColor: 'hsl(var(--section-alt))' }}
           >
-            <ScrollFade delay={100} className="flex flex-col justify-center w-[90%] sm:w-full max-w-full min-w-0 mx-auto">
+            <ScrollFade delay={80} className="flex flex-col justify-center w-[90%] sm:w-full max-w-full min-w-0 mx-auto">
               <div className="bg-card rounded-xl sm:rounded-2xl border border-border/60 relative overflow-hidden w-full !border-border/40 shadow-xl">
                 {/* Browser chrome */}
                 <div className="px-2.5 sm:px-5 py-1 sm:py-1.5 border-b border-border/60 flex items-center gap-2 sm:gap-3 bg-muted/30">
@@ -103,7 +103,7 @@ const FeaturesSection = () => {
             {capabilities.map((cap, i) => (
               <ScrollFade
                 key={cap.title}
-                delay={i * 60}
+                delay={80}
               >
                 <div className="flex items-start gap-4 p-4 rounded-xl border border-transparent hover:border-primary/15 hover:bg-card transition-all duration-150 cursor-default group">
                   <div className="icon-box">

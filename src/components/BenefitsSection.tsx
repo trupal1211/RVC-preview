@@ -62,7 +62,7 @@ const BenefitsSection = () => {
           {benefits.map((b, i) => (
             <ScrollFade
               key={b.title}
-              delay={i * 100}
+              delay={i * 80}
               className="premium-card p-7 group w-full sm:w-[calc(50%-1.25rem)] lg:w-[calc(33.333%-1.25rem)]"
             >
               <div className="absolute top-0 left-0 right-0 h-1 bg-[#49983E] scale-x-0 group-hover:scale-x-100 transition-transform duration-500 origin-left will-change-transform" />

@@ -112,21 +112,14 @@ const HeroSection = () => {
                     onClick={openCalendly}
                     className="btn-cta text-sm sm:text-base px-6 sm:px-7 w-full sm:w-auto justify-center"
                   >
-                    Book a Demo <ArrowRight className="h-5 w-5" />
+                    Book a Demo <ArrowRight className="h-6 w-6" />
                   </button>
-                  {/* 
-                  <button
-                    onClick={goToVideos}
-                    className="inline-flex items-center gap-2 pl-1 pr-6 sm:pr-7 py-3.5 rounded-full font-semibold text-base sm:text-lg transition-all duration-300 text-gray-600 hover:text-primary justify-center w-full sm:w-auto"
-                  >
-                    <PlayCircle className="h-6 w-6" /> View Demo Videos
-                  </button>
-                  */}
+
                   <button
                     onClick={goToVideos}
                     className="btn-outline text-sm sm:text-base px-6 sm:px-7 w-full sm:w-auto justify-center"
                   >
-                    <PlayCircle className="h-4 w-4" /> View Demo Videos
+                    <PlayCircle className="h-6 w-6" /> View Demo Videos
                   </button>
                 </div>
                 <button
@@ -134,7 +127,7 @@ const HeroSection = () => {
                   className="btn-outline text-sm sm:text-base px-6 sm:px-7 w-full justify-center"
                 >
                   Start Free on AppExchange{" "}
-                  <ExternalLink className="h-4 w-4" />
+                  <ExternalLink className="h-5 w-5" />
                 </button>
               </div>
             </div>

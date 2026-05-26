@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { Mail, Phone, MapPin, Send, CheckCircle, ArrowRight } from "lucide-react";
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
@@ -6,7 +6,7 @@ import { ScrollFade } from "./ScrollFade";
 import { useRecaptcha } from "@/hooks/useRecaptcha";
 
 /* ── Lazy-loaded Google Map ── */
-const LazyMap = () => {
+const LazyMap = React.memo(() => {
   const mapRef = useRef<HTMLDivElement>(null);
   const [isLoaded, setIsLoaded] = useState(false);
 
@@ -54,7 +54,7 @@ const LazyMap = () => {
       )}
     </div>
   );
-};
+});
 
 /* ── Contact Section ── */
 const ContactSection = () => {
@@ -78,8 +78,9 @@ const ContactSection = () => {
       if (!value.trim()) errorMsg = "Email is required";
       else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)) errorMsg = "Please enter a valid email";
     } else if (field === "phone") {
+      const digitCount = value.replace(/\D/g, "").length;
       if (!value.trim()) errorMsg = "Phone number is required";
-      else if (!/^[+]?[(]?[0-9]{3}[)]?[-\s.]?[0-9]{3}[-\s.]?[0-9]{4,6}/.test(value.replace(/\s+/g, ""))) errorMsg = "Please enter a valid phone number";
+      else if (digitCount < 7 || digitCount > 15 || !/^\+?[\d\s()\-.]+$/.test(value)) errorMsg = "Please enter a valid phone number";
     }
     return errorMsg;
   };
@@ -192,7 +193,7 @@ const ContactSection = () => {
           {/* ── Left: Quick Contact (Sticky on desktop) ── */}
           <ScrollFade
             className="space-y-6 w-full lg:sticky lg:top-[110px] h-fit"
-            delay={100}
+            delay={80}
           >
             <div>
               <h3 className="text-xl md:text-2xl font-bold font-heading mb-3 text-primary">
@@ -210,7 +211,7 @@ const ContactSection = () => {
                 href="https://www.google.com/maps?cid=1981104171238256651"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="flex items-start gap-4 p-5 rounded-xl border border-primary-highlited/45 bg-primary-highlited/1 transition-all duration-300 cursor-pointer w-full min-w-0 shadow-sm hover:shadow-md group"
+                className="flex items-start gap-4 p-5 rounded-xl border border-primary/45 bg-primary-highlited/1 transition-all duration-300 cursor-pointer w-full min-w-0 shadow-sm hover:shadow-md group"
               >
                 <div className="w-12 h-12 rounded-xl bg-primary/80 flex items-center justify-center shrink-0">
                   <MapPin className="w-5 h-5 text-white" />
@@ -227,7 +228,7 @@ const ContactSection = () => {
               {/* Phone */}
               <a
                 href="tel:16697776838"
-                className="flex items-center gap-4 p-5 rounded-xl border border-primary-highlited/45 bg-primary-highlited/1 transition-all duration-300 cursor-pointer w-full min-w-0 shadow-sm hover:shadow-md group"
+                className="flex items-center gap-4 p-5 rounded-xl border border-primary/45 bg-primary-highlited/1 transition-all duration-300 cursor-pointer w-full min-w-0 shadow-sm hover:shadow-md group"
               >
                 <div className="w-12 h-12 rounded-xl bg-primary/80 flex items-center justify-center shrink-0">
                   <Phone className="w-5 h-5 text-white" />
@@ -243,7 +244,7 @@ const ContactSection = () => {
               {/* Email */}
               <a
                 href="mailto:info@ardira.com"
-                className="flex items-center gap-4 p-5 rounded-xl border border-primary-highlited/45 bg-primary-highlited/1 transition-all duration-300 cursor-pointer w-full min-w-0 shadow-sm hover:shadow-md group"
+                className="flex items-center gap-4 p-5 rounded-xl border border-primary/45 bg-primary-highlited/1 transition-all duration-300 cursor-pointer w-full min-w-0 shadow-sm hover:shadow-md group"
               >
                 <div className="w-12 h-12 rounded-xl bg-primary/80 flex items-center justify-center shrink-0">
                   <Mail className="w-5 h-5 text-white" />
@@ -258,7 +259,7 @@ const ContactSection = () => {
             </div>
 
             {/* Support Note */}
-            <div className="flex items-start gap-4 p-5 rounded-xl border border-primary-highlited/45 bg-primary-highlited/10 transition-all duration-300 cursor-pointer w-full min-w-0 shadow-sm group cursor-pointer transition-colors">
+            <div className="flex items-start gap-4 p-5 rounded-xl border border-primary/45 bg-primary-highlited/10 transition-all duration-300 cursor-pointer w-full min-w-0 shadow-sm group cursor-pointer transition-colors">
               <div className="w-10 h-10 rounded-full bg-primary/80 flex items-center justify-center shrink-0 text-lg font-bold text-white">
                 ?
               </div>
@@ -284,7 +285,7 @@ const ContactSection = () => {
           {/* ── Right: Contact Form ── */}
           <ScrollFade
             className="w-full min-w-0 mt-6 md:mt-0"
-            delay={200}
+            delay={160}
           >
             {submitted ? (
               /* ── Success State ── */
@@ -356,7 +357,7 @@ const ContactSection = () => {
               <form
                 onSubmit={handleSubmit}
                 style={{ boxSizing: "border-box" }}
-                className="premium-card premium-card-active p-4 md:p-8 space-y-5 !border-primary-highlited/50"
+                className="premium-card premium-card-active p-4 md:p-8 space-y-5 !border-primary/45"
               >
                 <div>
                   <h3 className="text-lg font-bold text-text-heading mb-1">
@@ -369,10 +370,11 @@ const ContactSection = () => {
 
                 {/* Name */}
                 <div>
-                  <label className="block text-sm font-semibold text-text-heading mb-2">
+                  <label htmlFor="contact-name" className="block text-sm font-semibold text-text-heading mb-2">
                     Name<span className="text-destructive">*</span>
                   </label>
                   <input
+                    id="contact-name"
                     type="text"
                     disabled={isSubmitting}
                     value={form.name}
@@ -390,10 +392,11 @@ const ContactSection = () => {
 
                 {/* Email */}
                 <div>
-                  <label className="block text-sm font-semibold text-text-heading mb-2">
+                  <label htmlFor="contact-email" className="block text-sm font-semibold text-text-heading mb-2">
                     Email<span className="text-destructive">*</span>
                   </label>
                   <input
+                    id="contact-email"
                     type="email"
                     disabled={isSubmitting}
                     value={form.email}
@@ -411,10 +414,11 @@ const ContactSection = () => {
 
                 {/* Phone */}
                 <div>
-                  <label className="block text-sm font-semibold text-text-heading mb-2">
+                  <label htmlFor="contact-phone" className="block text-sm font-semibold text-text-heading mb-2">
                     Phone<span className="text-destructive">*</span>
                   </label>
                   <input
+                    id="contact-phone"
                     type="tel"
                     disabled={isSubmitting}
                     value={form.phone}
@@ -432,10 +436,11 @@ const ContactSection = () => {
 
                 {/* Message */}
                 <div>
-                  <label className="block text-sm font-semibold text-text-heading mb-2">
+                  <label htmlFor="contact-message" className="block text-sm font-semibold text-text-heading mb-2">
                     Message
                   </label>
                   <textarea
+                    id="contact-message"
                     rows={5}
                     disabled={isSubmitting}
                     value={form.message}

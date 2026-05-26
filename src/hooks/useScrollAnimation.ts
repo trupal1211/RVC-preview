@@ -7,8 +7,8 @@ interface UseScrollAnimationOptions {
 }
 
 export const useScrollAnimation = ({
-    threshold = 0.1,
-    rootMargin = '0px 0px -50px 0px',
+    threshold = 0,
+    rootMargin = '0px 0px 100px 0px',
     triggerOnce = true,
 }: UseScrollAnimationOptions = {}) => {
     const [isVisible, setIsVisible] = useState(false);

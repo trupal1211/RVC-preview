@@ -95,8 +95,8 @@ export default {
         },
       },
       animation: {
-        "accordion-down": "accordion-down 0.2s cubic-bezier(0.33, 1, 0.68, 1)",
-        "accordion-up": "accordion-up 0.2s cubic-bezier(0.33, 1, 0.68, 1)",
+        "accordion-down": "accordion-down 0.15s cubic-bezier(0.2, 1, 0.4, 1)",
+        "accordion-up": "accordion-up 0.15s cubic-bezier(0.2, 1, 0.4, 1)",
       },
     },
   },

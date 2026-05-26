@@ -1,4 +1,4 @@
-import { Suspense, lazy, useEffect } from "react";
+import { Suspense, lazy, useEffect, useState, useRef } from "react";
 import { useLocation } from "react-router-dom";
 import Navbar from "@/components/Navbar";
 import HeroSection from "@/components/HeroSection";
@@ -50,8 +50,42 @@ const CTASection = lazy(() =>
 
 // Loading fallback component
 const SectionSkeleton = () => (
-  <div className="min-h-[400px] bg-gradient-to-b from-background to-background/50 animate-pulse" />
+  <div className="min-h-[400px] w-full bg-gradient-to-b from-background to-background/50 animate-pulse" />
 );
+
+// True lazy loading wrapper dependent on scroll intersection
+const LazySection = ({ children }: { children: React.ReactNode }) => {
+  const [isVisible, setIsVisible] = useState(false);
+  const ref = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    // If there is a targeted hash url, immediately render all sections to ensure jump links function.
+    if (window.location.hash && window.location.hash !== "#" && window.location.hash !== "#home") {
+      setIsVisible(true);
+      return;
+    }
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (entries[0].isIntersecting) {
+          setIsVisible(true);
+          observer.disconnect();
+        }
+      },
+      { rootMargin: "600px 0px" } // Render 600px before coming into view
+    );
+
+    if (ref.current) observer.observe(ref.current);
+
+    return () => observer.disconnect();
+  }, []);
+
+  return (
+    <div ref={ref} className={!isVisible ? "min-h-[400px]" : ""}>
+      {isVisible ? <Suspense fallback={<SectionSkeleton />}>{children}</Suspense> : <SectionSkeleton />}
+    </div>
+  );
+};
 
 const Index = () => {
   const location = useLocation();
@@ -87,27 +121,27 @@ const Index = () => {
       <Navbar />
       <main className="relative z-10">
         <HeroSection />
-        <Suspense fallback={<SectionSkeleton />}>
+        <LazySection>
           <WhatIsSection />
-        </Suspense>
-        <Suspense fallback={<SectionSkeleton />}>
+        </LazySection>
+        <LazySection>
           <FeaturesSection />
-        </Suspense>
-        <Suspense fallback={<SectionSkeleton />}>
+        </LazySection>
+        <LazySection>
           <BenefitsSection />
-        </Suspense>
-        <Suspense fallback={<SectionSkeleton />}>
+        </LazySection>
+        <LazySection>
           <UseCasesSection />
-        </Suspense>
-        <Suspense fallback={<SectionSkeleton />}>
+        </LazySection>
+        <LazySection>
           <FAQSection />
-        </Suspense>
-        <Suspense fallback={<SectionSkeleton />}>
+        </LazySection>
+        <LazySection>
           <ContactSection />
-        </Suspense>
-        <Suspense fallback={<SectionSkeleton />}>
+        </LazySection>
+        <LazySection>
           <CTASection />
-        </Suspense>
+        </LazySection>
       </main>
       <Footer />
     </div>

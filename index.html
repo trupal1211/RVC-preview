@@ -5,8 +5,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="theme-color" content="#4D9A3F" />
 
-    <!-- Preload critical fonts or essential assets here if needed -->
-    <!-- Removed unused hero image preload -->
+    <!-- Preload critical fonts for fast FCP and LCP -->
+    <link rel="preload" href="/src/assets/fonts/poppins-v20-latin-400.woff2" as="font" type="font/woff2" crossorigin>
+    <link rel="preload" href="/src/assets/fonts/poppins-v20-latin-700.woff2" as="font" type="font/woff2" crossorigin>
+    <link rel="preload" href="/src/assets/fonts/poppins-v20-latin-800.woff2" as="font" type="font/woff2" crossorigin>
 
     <!-- DNS prefetch for lazy-loaded third-party resources -->
     <link rel="dns-prefetch" href="https://www.google.com">
@@ -30,7 +32,7 @@
     
     
     <meta property="og:image:width" content="1200">
-    <meta property="og:image:height" content="630">
+    <meta property="og:image:height" content="600">
 
     <!-- Twitter / X -->
     <meta name="twitter:card" content="summary_large_image" />
@@ -206,6 +208,7 @@
   
   <meta property="og:image" content="https://storage.googleapis.com/gpt-engineer-file-uploads/oCb9rNA2OjVXhd35WYTU3MmwZth2/social-images/social-1779378622434-logo.webp">
   <meta name="twitter:image" content="https://storage.googleapis.com/gpt-engineer-file-uploads/oCb9rNA2OjVXhd35WYTU3MmwZth2/social-images/social-1779378622434-logo.webp">
+  <meta property="og:logo" content="https://www.relationshipvista.com/favicon.png" />
   <meta property="og:title" content="RelationshipVista — Intelligent Relationship Mapping">
   <meta name="twitter:title" content="RelationshipVista — Intelligent Relationship Mapping">
   <meta property="og:description" content="RelationshipVista is a 100% native Salesforce relationship mapping and visualization solution. Explore account hierarchies, opportunity pipelines, and connected records interactively.">

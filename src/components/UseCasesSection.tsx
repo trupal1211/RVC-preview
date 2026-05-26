@@ -3,8 +3,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { ScrollFade } from "./ScrollFade";
 import {
    Building2, TrendingUp, Contact, Headphones,
-   Package, FileText, Database, GitBranch,
-   Eye, Maximize2, GitMerge
+   Package, FileText, Database, GitBranch, GitMerge
 } from "lucide-react";
 
 // The complete relationship network dataset
@@ -122,40 +121,41 @@ export default function UseCasesSection() {
          </div>
 
          <div className="container relative z-30">
-            <div className="flex flex-col xl:flex-row gap-8 lg:gap-12 items-center">
+            <ScrollFade delay={80}>
+               <div className="flex flex-col xl:flex-row gap-8 lg:gap-12 items-center">
 
-               {/* LEFT: INTERACTIVE NETWORK GRAPH UI */}
-               <div
-                  className="w-full xl:w-[55%] flex-shrink-0 bg-background/80 backdrop-blur-xl border border-primary/25 shadow-[0_10px_40px_-10px_hsl(var(--primary)/0.15),0_4px_6px_-4px_hsl(0,0%,0%/0.05)] rounded-2xl overflow-hidden relative"
-                  onMouseEnter={() => setIsHovered(true)}
-                  onMouseLeave={() => setIsHovered(false)}
-               >
-                  {/* Window Chrome */}
-                  <div className="w-full h-11 bg-muted/30 border-b border-border/60 flex items-center px-4 gap-3 relative z-20">
-                     <div className="flex gap-1.5">
-                        <div className="w-3 h-3 rounded-full bg-destructive/70"></div>
-                        <div className="w-3 h-3 rounded-full bg-amber-500/70"></div>
-                        <div className="w-3 h-3 rounded-full bg-primary/70"></div>
+                  {/* LEFT: INTERACTIVE NETWORK GRAPH UI */}
+                  <div
+                     className="w-full xl:w-[55%] flex-shrink-0 bg-background/80 backdrop-blur-xl border border-primary/25 shadow-[0_10px_40px_-10px_hsl(var(--primary)/0.15),0_4px_6px_-4px_hsl(0,0%,0%/0.05)] rounded-2xl overflow-hidden relative"
+                     onMouseEnter={() => setIsHovered(true)}
+                     onMouseLeave={() => setIsHovered(false)}
+                  >
+                     {/* Window Chrome */}
+                     <div className="w-full h-11 bg-muted/30 border-b border-border/60 flex items-center px-4 gap-3 relative z-20">
+                        <div className="flex gap-1.5">
+                           <div className="w-3 h-3 rounded-full bg-destructive/70"></div>
+                           <div className="w-3 h-3 rounded-full bg-amber-500/70"></div>
+                           <div className="w-3 h-3 rounded-full bg-primary/70"></div>
+                        </div>
+                        <div className="ml-4 px-3 py-1 bg-background/60 rounded text-[10px] font-mono text-muted-foreground border border-border/50 flex items-center gap-2">
+                           <GitMerge className="w-3 h-3 text-primary" />
+                           Relationship_Mapping.io
+                        </div>
                      </div>
-                     <div className="ml-4 px-3 py-1 bg-background/60 rounded text-[10px] font-mono text-muted-foreground border border-border/50 flex items-center gap-2">
-                        <GitMerge className="w-3 h-3 text-primary" />
-                        Relationship_Mapping.io
-                     </div>
-                  </div>
 
-                  {/* Graph Canvas */}
-                  <div className="w-full bg-primary/5">
-                     <div className="w-full relative aspect-[6/5] sm:aspect-[16/10] mx-auto overflow-hidden">
+                     {/* Graph Canvas */}
+                     <div className="w-full bg-primary/5">
+                        <div className="w-full relative aspect-[6/5] sm:aspect-[16/10] mx-auto overflow-hidden">
 
-                        {/* Connections SVG Layer */}
-                        <svg viewBox="0 0 800 640" preserveAspectRatio="none" className="absolute inset-0 w-full h-full pointer-events-none z-0">
-                           <defs>
-                              <linearGradient id="activeEdgeGradient" x1="0%" y1="0%" x2="100%" y2="0%">
-                                 <stop offset="0%" stopColor="hsl(var(--primary))" stopOpacity="1" />
-                                 <stop offset="100%" stopColor="hsl(var(--primary))" stopOpacity="1" />
-                              </linearGradient>
-                              <style>
-                                 {`
+                           {/* Connections SVG Layer */}
+                           <svg viewBox="0 0 800 640" preserveAspectRatio="none" className="absolute inset-0 w-full h-full pointer-events-none z-0">
+                              <defs>
+                                 <linearGradient id="activeEdgeGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+                                    <stop offset="0%" stopColor="hsl(var(--primary))" stopOpacity="1" />
+                                    <stop offset="100%" stopColor="hsl(var(--primary))" stopOpacity="1" />
+                                 </linearGradient>
+                                 <style>
+                                    {`
                             @keyframes smoothFlowStream {
                               0% { stroke-dashoffset: 18; }
                               100% { stroke-dashoffset: 0; }
@@ -164,161 +164,162 @@ export default function UseCasesSection() {
                               animation: smoothFlowStream 0.8s linear infinite; 
                             }
                           `}
-                              </style>
-                           </defs>
+                                 </style>
+                              </defs>
 
-                           {useCases.map(node => {
-                              if (node.parent === null) return null;
-                              const p = useCases.find(u => u.id === node.parent);
-                              if (!p) return null;
+                              {useCases.map(node => {
+                                 if (node.parent === null) return null;
+                                 const p = useCases.find(u => u.id === node.parent);
+                                 if (!p) return null;
 
-                              const isActiveEdge = activePath.includes(node.id) && activePath.includes(p.id);
+                                 const isActiveEdge = activePath.includes(node.id) && activePath.includes(p.id);
 
-                              // Seamless connection points (stops line from piercing icon backgrounds)
-                              // Icon radius is approx 24px (w-12 h-12 = 48x48)
-                              const startX = p.x + 24;
-                              const endX = node.x - 24;
+                                 // Seamless connection points (stops line from piercing icon backgrounds)
+                                 // Icon radius is approx 24px (w-12 h-12 = 48x48)
+                                 const startX = p.x + 24;
+                                 const endX = node.x - 24;
 
-                              // Smooth Bezier S-Curve logic connecting explicit node borders
-                              const cpX = startX + (endX - startX) / 2;
-                              const pathData = `M ${startX} ${p.y} C ${cpX} ${p.y}, ${cpX} ${node.y}, ${endX} ${node.y}`;
+                                 // Smooth Bezier S-Curve logic connecting explicit node borders
+                                 const cpX = startX + (endX - startX) / 2;
+                                 const pathData = `M ${startX} ${p.y} C ${cpX} ${p.y}, ${cpX} ${node.y}, ${endX} ${node.y}`;
 
-                              return (
-                                 <g key={`edge-${node.id}`}>
-                                    {/* Background inactive/dimmed line */}
-                                    <path
-                                       d={pathData}
-                                       fill="none"
-                                       stroke="currentColor"
-                                       className="opacity-10 text-slate-400"
-                                       strokeWidth="1.5"
-                                       strokeDasharray="6 6"
-                                    />
-
-                                    {/* Glowing Active Line Overlay */}
-                                    {isActiveEdge && (
+                                 return (
+                                    <g key={`edge-${node.id}`}>
+                                       {/* Background inactive/dimmed line */}
                                        <path
                                           d={pathData}
                                           fill="none"
-                                          stroke="hsl(var(--primary))"
-                                          className="opacity-100"
+                                          stroke="currentColor"
+                                          className="opacity-10 text-slate-400"
                                           strokeWidth="1.5"
                                           strokeDasharray="6 6"
-                                          style={{ transition: "all 0.5s ease" }}
                                        />
-                                    )}
-                                 </g>
-                              )
-                           })}
-                        </svg>
 
-                        {/* DOM Node Layer */}
-                        <div className="absolute inset-0 z-10 pointer-events-none">
-                           {useCases.map(node => {
-                              const isInPath = activePath.includes(node.id);
-                              const isCurrentlyActive = activeId === node.id;
-
-                              return (
-                                 <div
-                                    key={node.title}
-                                    className="absolute transform -translate-x-1/2 -translate-y-1/2 pointer-events-auto"
-                                    style={{ left: `${(node.x / 800) * 100}%`, top: `${(node.y / 640) * 100}%` }}
-                                 >
-                                    <div
-                                       onClick={() => handleNodeClick(node.id)}
-                                       className="flex flex-col items-center group cursor-pointer relative"
-                                    >
-                                       {isCurrentlyActive && (
-                                          <div className="absolute inset-0 bg-primary/20 rounded-full blur-xl scale-150 animate-pulse z-0" />
+                                       {/* Glowing Active Line Overlay */}
+                                       {isActiveEdge && (
+                                          <path
+                                             d={pathData}
+                                             fill="none"
+                                             stroke="hsl(var(--primary))"
+                                             className="opacity-100"
+                                             strokeWidth="1.5"
+                                             strokeDasharray="6 6"
+                                             style={{ transition: "all 0.5s ease" }}
+                                          />
                                        )}
+                                    </g>
+                                 )
+                              })}
+                           </svg>
 
-                                       <div className={`relative z-10 w-8 h-8 sm:w-10 sm:h-10 md:w-12 md:h-12 rounded-md sm:rounded-lg flex items-center justify-center transition-all duration-300
+                           {/* DOM Node Layer */}
+                           <div className="absolute inset-0 z-10 pointer-events-none">
+                              {useCases.map(node => {
+                                 const isInPath = activePath.includes(node.id);
+                                 const isCurrentlyActive = activeId === node.id;
+
+                                 return (
+                                    <div
+                                       key={node.title}
+                                       className="absolute transform -translate-x-1/2 -translate-y-1/2 pointer-events-auto"
+                                       style={{ left: `${(node.x / 800) * 100}%`, top: `${(node.y / 640) * 100}%` }}
+                                    >
+                                       <div
+                                          onClick={() => handleNodeClick(node.id)}
+                                          className="flex flex-col items-center group cursor-pointer relative"
+                                       >
+                                          {isCurrentlyActive && (
+                                             <div className="absolute inset-0 bg-primary/20 rounded-full blur-xl scale-150 animate-pulse z-0" />
+                                          )}
+
+                                          <div className={`relative z-10 w-8 h-8 sm:w-10 sm:h-10 md:w-12 md:h-12 rounded-md sm:rounded-lg flex items-center justify-center transition-all duration-300
                                      ${isCurrentlyActive ? 'bg-primary shadow-[0_8px_24px_rgba(var(--primary),0.4)] scale-110 border-none' :
-                                             isInPath ? 'bg-primary/10 border-primary/40 border shadow-sm' :
-                                                'bg-background border border-border/60 group-hover:bg-muted/50 group-hover:border-primary/30'}
+                                                isInPath ? 'bg-primary/10 border-primary/40 border shadow-sm' :
+                                                   'bg-background border border-border/60 group-hover:bg-muted/50 group-hover:border-primary/30'}
                                   `}>
-                                          <node.icon className={`w-3.5 h-3.5 sm:w-4 sm:h-4 md:w-5 md:h-5 transition-colors duration-300 
+                                             <node.icon className={`w-3.5 h-3.5 sm:w-4 sm:h-4 md:w-5 md:h-5 transition-colors duration-300 
                                         ${isCurrentlyActive ? 'text-white' :
-                                                isInPath ? 'text-primary' : 'text-slate-500 group-hover:text-primary'}
+                                                   isInPath ? 'text-primary' : 'text-slate-500 group-hover:text-primary'}
                                      `} />
-                                       </div>
+                                          </div>
 
-                                       <span className={`absolute top-full left-1/2 -translate-x-1/2 mt-1 sm:mt-1.5 md:mt-2.5 text-[8px] sm:text-[9px] md:text-[11px] font-bold whitespace-nowrap px-1 sm:px-1.5 md:px-2.5 py-0.5 sm:py-0.5 md:py-1 rounded-sm sm:rounded-md backdrop-blur-md shadow-sm transition-all duration-300
+                                          <span className={`absolute top-full left-1/2 -translate-x-1/2 mt-1 sm:mt-1.5 md:mt-2.5 text-[8px] sm:text-[9px] md:text-[11px] font-bold whitespace-nowrap px-1 sm:px-1.5 md:px-2.5 py-0.5 sm:py-0.5 md:py-1 rounded-sm sm:rounded-md backdrop-blur-md shadow-sm transition-all duration-300
                                      ${isCurrentlyActive ? 'bg-primary/10 border border-primary/30 text-primary scale-105' :
-                                             isInPath ? 'bg-background/80 border border-slate-300 text-slate-800' :
-                                                'bg-background/50 border border-transparent text-slate-500 group-hover:text-slate-800'}
+                                                isInPath ? 'bg-background/80 border border-slate-300 text-slate-800' :
+                                                   'bg-background/50 border border-transparent text-slate-500 group-hover:text-slate-800'}
                                   `}>
-                                          {node.label}
-                                       </span>
+                                             {node.label}
+                                          </span>
+                                       </div>
                                     </div>
-                                 </div>
-                              )
-                           })}
-                        </div>
+                                 )
+                              })}
+                           </div>
 
+                        </div>
                      </div>
                   </div>
-               </div>
 
-               {/* RIGHT: DYNAMIC DATA PANEL */}
-               <div className="w-full xl:w-[45%] flex flex-col justify-center lg:pl-4">
-                  <AnimatePresence mode="wait">
-                     <motion.div
-                        key={activeCase.id}
-                        initial={{ opacity: 0, y: 30 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        exit={{ opacity: 0, y: -20 }}
-                        transition={{ duration: 0.4, ease: "easeOut" }}
-                        className="flex flex-col"
-                     >
-                        {/* Header Block */}
-                        <div className="flex items-center gap-3 sm:gap-4 mb-4 sm:mb-6">
-                           <div className="w-12 h-12 md:w-16 md:h-16 rounded-xl md:rounded-2xl bg-primary/10 border border-primary/20 flex items-center justify-center shadow-inner shrink-0 leading-none">
-                              <activeCase.icon className="w-6 h-6 md:w-8 md:h-8 text-primary" />
-                           </div>
-                           <div>
-                              <h3 className="text-xl md:text-3xl font-bold font-heading text-slate-900 tracking-tight leading-none pt-0.5">
-                                 {activeCase.title}
-                              </h3>
-                           </div>
-                        </div>
-
-                        {/* Body Text */}
-                        <div className="bg-slate-50/50 border border-slate-200/60 p-3 sm:p-4 md:p-5 rounded-xl mb-4 sm:mb-6 md:mb-8 relative overflow-hidden">
-                           <div className="absolute left-0 top-0 bottom-0 w-1 bg-primary rounded-l-xl"></div>
-                           <p className="text-sm sm:text-base md:text-lg text-slate-600 leading-relaxed h-[66px] sm:h-[72px] md:h-auto md:min-h-0 flex items-center overflow-hidden">
-                              {activeCase.desc}
-                           </p>
-                        </div>
-
-                        {/* Faux Metric Grid */}
-                        <div className="grid grid-cols-2 gap-2 sm:gap-4 mt-2">
-                           <div className="py-2 px-2.5 sm:p-4 rounded-xl bg-white border border-slate-200 shadow-[0_2px_10px_rgba(0,0,0,0.02)]">
-                              <div className="text-[11px] font-bold text-slate-500 mb-0.5 sm:mb-1 tracking-wider uppercase">Core Entity</div>
-                              <div className="text-[14px] sm:text-[16px] font-bold text-slate-900 leading-tight truncate">{metrics.a}</div>
-                           </div>
-                           <div className="py-2 px-2.5 sm:p-4 rounded-xl bg-white border border-slate-200 shadow-[0_2px_10px_rgba(0,0,0,0.02)]">
-                              <div className="text-[11px] font-bold text-slate-500 mb-0.5 sm:mb-1 tracking-wider uppercase">Visualization</div>
-                              <div className="text-[14px] sm:text-[16px] font-bold text-slate-900 leading-tight truncate">{metrics.b}</div>
-                           </div>
-                           <div className="py-2 px-2.5 sm:p-4 rounded-xl bg-white border border-slate-200 shadow-[0_2px_10px_rgba(0,0,0,0.02)]">
-                              <div className="text-[11px] font-bold text-slate-500 mb-0.5 sm:mb-1 tracking-wider uppercase">Mapping Type</div>
-                              <div className="text-[14px] sm:text-[16px] font-bold text-slate-900 leading-tight truncate">{metrics.c}</div>
-                           </div>
-                           <div className="py-2 px-2.5 sm:p-4 rounded-xl bg-white border border-slate-200 shadow-[0_2px_10px_rgba(0,0,0,0.02)] relative overflow-hidden">
-                              <div className="absolute inset-0 bg-primary/5"></div>
-                              <div className="text-[11px] font-bold text-slate-500 mb-0.5 sm:mb-1 tracking-wider uppercase relative z-10">Data Sync</div>
-                              <div className="text-[13px] sm:text-[16px] font-bold text-primary flex items-center gap-1 sm:gap-1.5 relative z-10 truncate">
-                                 <span className="w-1.5 h-1.5 sm:w-2 sm:h-2 rounded-full bg-primary animate-pulse shrink-0"></span> Native Real-time
+                  {/* RIGHT: DYNAMIC DATA PANEL */}
+                  <div className="w-full xl:w-[45%] flex flex-col justify-center lg:pl-4">
+                     <AnimatePresence mode="wait">
+                        <motion.div
+                           key={activeCase.id}
+                           initial={{ opacity: 0, y: 30 }}
+                           animate={{ opacity: 1, y: 0 }}
+                           exit={{ opacity: 0, y: -20 }}
+                           transition={{ duration: 0.4, ease: "easeOut" }}
+                           className="flex flex-col"
+                        >
+                           {/* Header Block */}
+                           <div className="flex items-center gap-3 sm:gap-4 mb-4 sm:mb-6">
+                              <div className="w-12 h-12 md:w-16 md:h-16 rounded-xl md:rounded-2xl bg-primary/10 border border-primary/20 flex items-center justify-center shadow-inner shrink-0 leading-none">
+                                 <activeCase.icon className="w-6 h-6 md:w-8 md:h-8 text-primary" />
+                              </div>
+                              <div>
+                                 <h3 className="text-xl md:text-3xl font-bold font-heading text-slate-900 tracking-tight leading-none pt-0.5">
+                                    {activeCase.title}
+                                 </h3>
                               </div>
                            </div>
-                        </div>
 
-                     </motion.div>
-                  </AnimatePresence>
+                           {/* Body Text */}
+                           <div className="bg-slate-50/50 border border-slate-200/60 p-3 sm:p-4 md:p-5 rounded-xl mb-4 sm:mb-6 md:mb-8 relative overflow-hidden">
+                              <div className="absolute left-0 top-0 bottom-0 w-1 bg-primary rounded-l-xl"></div>
+                              <p className="text-sm sm:text-base md:text-lg text-slate-600 leading-relaxed h-[66px] sm:h-[72px] md:h-auto md:min-h-0 flex items-center overflow-hidden">
+                                 {activeCase.desc}
+                              </p>
+                           </div>
+
+                           {/* Faux Metric Grid */}
+                           <div className="grid grid-cols-2 gap-2 sm:gap-4 mt-2">
+                              <div className="py-2 px-2.5 sm:p-4 rounded-xl bg-white border border-slate-200 shadow-[0_2px_10px_rgba(0,0,0,0.02)]">
+                                 <div className="text-[11px] font-bold text-slate-500 mb-0.5 sm:mb-1 tracking-wider uppercase">Core Entity</div>
+                                 <div className="text-[14px] sm:text-[16px] font-bold text-slate-900 leading-tight truncate">{metrics.a}</div>
+                              </div>
+                              <div className="py-2 px-2.5 sm:p-4 rounded-xl bg-white border border-slate-200 shadow-[0_2px_10px_rgba(0,0,0,0.02)]">
+                                 <div className="text-[11px] font-bold text-slate-500 mb-0.5 sm:mb-1 tracking-wider uppercase">Visualization</div>
+                                 <div className="text-[14px] sm:text-[16px] font-bold text-slate-900 leading-tight truncate">{metrics.b}</div>
+                              </div>
+                              <div className="py-2 px-2.5 sm:p-4 rounded-xl bg-white border border-slate-200 shadow-[0_2px_10px_rgba(0,0,0,0.02)]">
+                                 <div className="text-[11px] font-bold text-slate-500 mb-0.5 sm:mb-1 tracking-wider uppercase">Mapping Type</div>
+                                 <div className="text-[14px] sm:text-[16px] font-bold text-slate-900 leading-tight truncate">{metrics.c}</div>
+                              </div>
+                              <div className="py-2 px-2.5 sm:p-4 rounded-xl bg-white border border-slate-200 shadow-[0_2px_10px_rgba(0,0,0,0.02)] relative overflow-hidden">
+                                 <div className="absolute inset-0 bg-primary/5"></div>
+                                 <div className="text-[11px] font-bold text-slate-500 mb-0.5 sm:mb-1 tracking-wider uppercase relative z-10">Data Sync</div>
+                                 <div className="text-[13px] sm:text-[16px] font-bold text-primary flex items-center gap-1 sm:gap-1.5 relative z-10 truncate">
+                                    <span className="w-1.5 h-1.5 sm:w-2 sm:h-2 rounded-full bg-primary animate-pulse shrink-0"></span> Native Real-time
+                                 </div>
+                              </div>
+                           </div>
+
+                        </motion.div>
+                     </AnimatePresence>
+                  </div>
+
                </div>
-
-            </div>
+            </ScrollFade>
          </div>
       </section>
    )

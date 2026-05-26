@@ -9,6 +9,7 @@ const WhatIsSection = () => {
 
           {/* Image */}
           <ScrollFade
+            delay={80}
             className="relative w-full flex items-center justify-center h-auto order-2 lg:order-1 -mt-4 lg:mt-0"
           >
             <HeroAnimation />
@@ -19,7 +20,7 @@ const WhatIsSection = () => {
 
             {/* Title */}
             <ScrollFade
-              delay={100}
+              delay={80}
               className="order-1 lg:order-none"
             >
               <p className="text-sm font-bold tracking-widest uppercase gradient-text mb-3 inline-block">
@@ -32,7 +33,7 @@ const WhatIsSection = () => {
 
             {/* Paragraphs */}
             <div className="space-y-5 order-3 lg:order-none lg:mt-5">
-              <ScrollFade delay={200}>
+              <ScrollFade delay={80}>
                 <div className="space-y-4 text-text-body text-[15px] leading-relaxed">
                   <p>
                     You shouldn't have to click through multiple records just to understand how things are connected.

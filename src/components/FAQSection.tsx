@@ -42,7 +42,7 @@ const FAQs = () => {
 
   const handleMouseEnter = useCallback((id: string) => {
     if (hoverTimer.current) clearTimeout(hoverTimer.current);
-    hoverTimer.current = setTimeout(() => setOpenItem(id), 75);
+    hoverTimer.current = setTimeout(() => setOpenItem(id), 90);
   }, []);
 
   const handleMouseLeave = useCallback(() => {
@@ -83,7 +83,7 @@ const FAQs = () => {
             {faqItems.map((faq, index) => (
               <ScrollFade
                 key={faq.id}
-                delay={index * 50}
+                delay={index * 80}
               >
                 <div
                   onMouseEnter={() => handleMouseEnter(faq.id)}

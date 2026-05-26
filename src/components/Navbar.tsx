@@ -30,9 +30,11 @@ const Navbar = ({ forceScrolled = false }: { forceScrolled?: boolean }) => {
   const [isCalendlyOpen, setIsCalendlyOpen] = useState(false);
   const [showScrollTop, setShowScrollTop] = useState(false);
   const isProgrammaticScroll = useRef(false);
+  const scrollStopTimer = useRef<NodeJS.Timeout>();
 
   // Determine if we're on an independent page (not the home page)
   const isIndependentPage = location.pathname !== "/" && location.pathname !== "";
+
 
   useEffect(() => {
     const onScroll = () => {
@@ -54,27 +56,33 @@ const Navbar = ({ forceScrolled = false }: { forceScrolled?: boolean }) => {
 
       setIsOverColoredSection(overColored);
 
-      // Reliable scroll-based section detection
-      if (!isIndependentPage && !isProgrammaticScroll.current) {
-        // Evaluate in reverse order (bottom to top)
-        const sectionIds = ["cta-section", "contact", "faq", "use-cases", "benefits", "features", "overview", "home"];
-        let currentSection = activeSection;
+      // Debounce mechanism to perfectly detect the exact end of a programmatic smooth scroll
+      if (scrollStopTimer.current) clearTimeout(scrollStopTimer.current);
 
+      if (isProgrammaticScroll.current) {
+        // Turn off the scroll lock exactly 150ms after the physical scroll animation stops completely
+        scrollStopTimer.current = setTimeout(() => {
+          isProgrammaticScroll.current = false;
+        }, 150);
+        return; // ABORT section detection entirely while programmatic scrolling is happening!
+      }
+
+      // Reliable scroll-based section detection (only happens during standard manual user scrolling)
+      if (!isIndependentPage) {
+        const sectionIds = ["cta-section", "contact", "faq", "use-cases", "benefits", "features", "overview", "home"];
+        let detected = activeSection;
         for (const id of sectionIds) {
           const el = document.getElementById(id);
           if (el) {
             const rect = el.getBoundingClientRect();
-            // A section is active if its top half or bottom half is in the detection zone
-            // 400px down from top is roughly the middle of a phone screen.
             if (rect.top <= 400 && rect.bottom >= 100) {
-              currentSection = id === "faq" || id === "cta-section" ? "contact" : id;
+              detected = id === "faq" || id === "cta-section" ? "contact" : id;
               break;
             }
           }
         }
-
-        if (currentSection !== activeSection) {
-          setActiveSection(currentSection);
+        if (detected !== activeSection) {
+          setActiveSection(detected);
         }
       }
     };
@@ -87,7 +95,7 @@ const Navbar = ({ forceScrolled = false }: { forceScrolled?: boolean }) => {
     return () => {
       window.removeEventListener("scroll", onScroll);
     };
-  }, [isIndependentPage]);
+  }, [isIndependentPage, activeSection]);
 
   const scrollToSection = (targetId: string) => {
     const selector = targetId.startsWith("#") ? targetId : `#${targetId}`;
@@ -98,9 +106,11 @@ const Navbar = ({ forceScrolled = false }: { forceScrolled?: boolean }) => {
       const offsetPosition = elementPosition + window.scrollY - offset;
 
       isProgrammaticScroll.current = true;
-      setTimeout(() => {
+      // Absolute fallback timeout just in case scroll events refuse to fire
+      if (scrollStopTimer.current) clearTimeout(scrollStopTimer.current);
+      scrollStopTimer.current = setTimeout(() => {
         isProgrammaticScroll.current = false;
-      }, 1000);
+      }, 3000);
 
       try {
         window.scrollTo({
@@ -120,6 +130,14 @@ const Navbar = ({ forceScrolled = false }: { forceScrolled?: boolean }) => {
       window.location.href = "/" + href;
     } else if (href.startsWith("#")) {
       setActiveSection(href.slice(1));
+
+      // Lock scroll detection immediately to prevent scroll events firing 
+      // during the 50ms timeout from reverting the state to the old section.
+      isProgrammaticScroll.current = true;
+      if (scrollStopTimer.current) clearTimeout(scrollStopTimer.current);
+      scrollStopTimer.current = setTimeout(() => {
+        isProgrammaticScroll.current = false;
+      }, 3000);
 
       // Delay programmatic scroll slightly so DOM unmount of the overlay
       // doesn't cause a layout shift that interrupts mobile Safari scrolling.
@@ -148,16 +166,16 @@ const Navbar = ({ forceScrolled = false }: { forceScrolled?: boolean }) => {
       className="fixed top-0 left-0 right-0 z-[150]"
     >
       <div
-        className={`container transition-all duration-300 ease-in-out ${scrolled
+        className={`container transition-all duration-500 ease-out md:mt-4 ${scrolled
           ? isOverColoredSection
-            ? "md:mt-4 md:rounded-[2.5rem] bg-slate-900/80 backdrop-blur-xl shadow-[0_12px_48px_rgba(0,0,0,0.4)] border border-white/10"
-            : "md:mt-4 md:rounded-[2.5rem] bg-white/70 backdrop-blur-xl shadow-[0_8px_30px_rgb(0,0,0,0.12)] border border-white/50"
-          : "mt-2 md:mt-3 rounded-none bg-transparent border border-transparent"
+            ? "md:rounded-[2.5rem] bg-slate-900/80 backdrop-blur-xl shadow-[0_12px_48px_rgba(0,0,0,0.4)] border border-white/10"
+            : "md:rounded-[2.5rem] bg-white/70 backdrop-blur-xl shadow-[0_8px_30px_rgb(0,0,0,0.12)] border border-white/50"
+          : "md:rounded-[2.5rem] bg-transparent border border-transparent shadow-none"
           }`}
       >
-        <nav className={`flex items-center justify-between transition-all duration-300 ease-in-out ${scrolled ? 'h-16 md:h-18 md:px-2' : 'h-16 md:h-20'}`}>
-          <a href="/" onClick={handleLogoClick} className="flex items-center gap-2 transition-all duration-300 ease-in-out">
-            <img src={logo} alt="RelationshipVista Logo" width={200} height={54} className={`transition-all duration-300 ease-in-out w-auto origin-left ${scrolled ? 'h-14 md:h-16' : 'h-14 md:h-20'}`} /></a><div className="hidden lg:flex items-center justify-end gap-1 ml-auto">{navLinks.map((link) => (
+        <nav className={`flex items-center justify-between transition-all duration-500 ease-out ${scrolled ? 'h-16 md:h-18 md:px-2' : 'h-16 md:h-20'}`}>
+          <a href="/" onClick={handleLogoClick} aria-label="RelationshipVista Home" className="flex items-center gap-2 transition-all duration-500 ease-out">
+            <img src={logo} alt="RelationshipVista Logo" width={200} height={54} className={`transition-all duration-500 ease-out w-auto origin-left ${scrolled ? 'h-14 md:h-16' : 'h-14 md:h-20'}`} /></a><div className="hidden lg:flex items-center justify-end gap-1 ml-auto">{navLinks.map((link) => (
               <a
                 key={link.href}
                 href={isIndependentPage ? `/${link.href}` : link.href}
@@ -165,7 +183,7 @@ const Navbar = ({ forceScrolled = false }: { forceScrolled?: boolean }) => {
                   e.preventDefault();
                   handleClick(link.href);
                 }}
-                className={`relative px-4 py-2 text-[15px] cursor-pointer inline-block font-medium rounded-lg transition-all duration-300 ${isIndependentPage
+                className={`relative px-4 py-2 text-[15px] cursor-pointer inline-block font-medium rounded-lg transition-colors duration-300 ${isIndependentPage
                   ? isOverColoredSection && scrolled ? "text-white/80 hover:text-white" : "text-slate-800 hover:bg-slate-800/5"
                   : activeSection === link.href.slice(1)
                     ? isOverColoredSection && scrolled ? "text-white" : "text-primary"
@@ -176,9 +194,11 @@ const Navbar = ({ forceScrolled = false }: { forceScrolled?: boolean }) => {
                 {!isIndependentPage && activeSection === link.href.slice(1) && (
                   <motion.div
                     layoutId="nav-indicator"
+                    transition={{ type: "tween", duration: 0.2, ease: "easeOut" }}
                     className={`absolute bottom-0 left-2 right-2 h-0.5 rounded-full ${isOverColoredSection && scrolled ? "bg-white" : "bg-primary"}`}
                   />
-                )}               </a>
+                )}
+              </a>
             ))}
 
             <DropdownMenu modal={false}>
@@ -211,7 +231,7 @@ rounded-lg transition-all duration-300 flex items-center gap-1 ${isOverColoredSe
             <button
               onClick={() => setIsCalendlyOpen(true)}
               aria-label="Book a product demo"
-              className={`ml-4 bg-primary text-primary-foreground rounded-full font-semibold overflow-hidden shadow-[0_4px_15px_hsl(var(--primary)/0.3)] hover:shadow-[0_6px_25px_hsl(var(--primary)/0.45)] transition-all duration-300 hover:-translate-y-0.5 ${scrolled ? "px-6 py-3 text-xs" : "px-7 py-3.5 text-sm"
+              className={`ml-4 bg-primary text-primary-foreground rounded-full font-semibold overflow-hidden shadow-[0_4px_15px_hsl(var(--primary)/0.3)] hover:shadow-[0_4px_25px_hsl(var(--primary)/0.45)] transition-all duration-500 ease-out ${scrolled ? "px-6 py-3 text-xs" : "px-7 py-3.5 text-sm"
                 }`}
             >
               Book a Demo
@@ -302,7 +322,7 @@ rounded-lg transition-all duration-300 flex items-center gap-1 ${isOverColoredSe
                     setTimeout(() => setIsCalendlyOpen(true), 150);
                   }}
                   aria-label="Book a product demo"
-                  className="bg-primary text-primary-foreground px-5 py-3 rounded-xl text-sm font-semibold mt-2 text-center w-full shadow-[0_4px_15px_hsl(var(--primary)/0.3)] transition-all duration-300 hover:shadow-[0_6px_25px_hsl(var(--primary)/0.45)] hover:-translate-y-0.5"
+                  className="bg-primary text-primary-foreground px-5 py-3 rounded-xl text-sm font-semibold mt-2 text-center w-full shadow-[0_4px_15px_hsl(var(--primary)/0.3)] transition-colors duration-300"
                 >
                   Book Demo
                 </button>
@@ -320,7 +340,7 @@ rounded-lg transition-all duration-300 flex items-center gap-1 ${isOverColoredSe
             initial={{ opacity: 0, scale: 0 }}
             animate={{ opacity: 1, scale: 1 }}
             exit={{ opacity: 0, scale: 0 }}
-            className="fixed bottom-6 right-6 z-40 w-12 h-12 rounded-full flex items-center justify-center bg-primary text-primary-foreground shadow-[0_4px_15px_hsl(var(--primary)/0.3)] hover:shadow-[0_6px_25px_hsl(var(--primary)/0.45)] transition-all duration-300 hover:-translate-y-0.5"
+            className="fixed bottom-6 right-6 z-40 w-12 h-12 rounded-full flex items-center justify-center bg-primary text-primary-foreground shadow-[0_4px_15px_hsl(var(--primary)/0.3)] transition-colors duration-300"
             whileHover={{ scale: 1.1 }}
             whileTap={{ scale: 0.95 }}
             aria-label="Scroll to top"

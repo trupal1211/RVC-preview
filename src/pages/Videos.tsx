@@ -92,7 +92,7 @@ export default function Videos() {
                         {videos.map((video, index) => (
                             <ScrollFade
                                 key={video.title}
-                                delay={index * 120}
+                                delay={index * 80}
                                 className="group"
                             >
                                 <div

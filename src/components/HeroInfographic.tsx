@@ -51,7 +51,7 @@ const HeroInfographic = () => {
 
             {/*  Visual Relationship Tree  */}
             <div className={`tree-section ${activeTab === 'tree' ? 'tab-active' : ''}`}>
-              <div className="section-header" onClick={handleTreeTab}>Visual Relationship Tree</div>
+              <button className="section-header w-full text-left" onClick={handleTreeTab} aria-selected={activeTab === 'tree'} role="tab">Visual Relationship Tree</button>
               <div className="tree-canvas">
                 {/* Desktop SVG connections */}
                 <svg className="connections-svg desktop-svg" style={{ position: 'absolute', top: '0', left: '0', width: '100%', height: '100%' }} preserveAspectRatio="none">
@@ -131,10 +131,10 @@ const HeroInfographic = () => {
 
             {/*  Relationship Explorer  */}
             <div className={`explorer-section ${activeTab === 'explorer' ? 'tab-active' : ''}`}>
-              <div className="section-header" onClick={handleExplorerTab}>Relationship Explorer</div>
+              <button className="section-header w-full text-left" onClick={handleExplorerTab} aria-selected={activeTab === 'explorer'} role="tab">Relationship Explorer</button>
               <div className="explorer-content">
                 <div className="explorer-toolbar">
-                  <input className="search-box" type="text" placeholder="Search..." readOnly />
+                  <input className="search-box" type="text" placeholder="Search..." aria-label="Search relationship explorer" readOnly />
                   <div className="toolbar-btn">▽</div>
                   <div className="toolbar-btn">↻</div>
                   <div className="toolbar-btn">+</div>

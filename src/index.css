@@ -139,24 +139,24 @@
   .btn-cta {
     background: hsl(var(--primary));
     color: hsl(var(--primary-foreground));
-    @apply inline-flex items-center gap-2 px-7 py-3.5 rounded-full font-semibold text-base transition-all duration-300 shadow-lg;
+    @apply inline-flex items-center gap-2 px-7 py-3.5 rounded-full font-semibold text-base duration-300;
+    transition-property: box-shadow, background-color, color, border-color;
     box-shadow: 0 4px 15px hsl(var(--primary) / 0.3);
   }
 
   .btn-cta:hover {
-    box-shadow: 0 6px 25px hsl(var(--primary) / 0.45);
-    @apply -translate-y-0.5;
+    box-shadow: 0 4px 25px hsl(var(--primary) / 0.45);
   }
 
   .btn-outline {
-    @apply inline-flex items-center gap-2 px-7 py-3.5 rounded-full font-semibold text-base border-2 transition-all duration-300;
+    @apply inline-flex items-center gap-2 px-7 py-3.5 rounded-full font-semibold text-base border-2 duration-300;
+    transition-property: box-shadow, background-color, color, border-color;
     border-color: hsl(var(--primary));
     color: hsl(var(--primary));
   }
 
   .btn-outline:hover {
     background-color: hsl(var(--primary-light));
-    @apply -translate-y-0.5;
   }
 
   /* Glassmorphism card */
@@ -170,7 +170,8 @@
 
   /* Scroll Animation Utilities (Zero-JS overhead) */
   .scroll-fade-up {
-    @apply opacity-0 translate-y-6 transition-all duration-700 ease-out;
+    @apply opacity-0 translate-y-3 ease-out;
+    transition: opacity 0.4s ease-out, transform 0.4s ease-out;
     will-change: opacity, transform;
   }
 
